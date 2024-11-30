@@ -9,11 +9,10 @@
         <option v-for="type in incidentTypes" :key="type" :value="type">{{ type }}</option>
       </select>
 
-      <!-- Date and Time -->
-      <label for="incident-date">Date of Incident</label>
-      <input type="date" id="incident-date" v-model="formData.date" />
-      <label for="incident-time">Time of Incident</label>
-      <input type="time" id="incident-time" v-model="formData.time" />
+     <!-- Location -->
+      <label for="location">Orgaisation</label>
+      <input type="text" id="location" v-model="formData.location" placeholder="Enter organisation (e.g., google,microsoft,...)" />
+
 
       <!-- Location -->
       <label for="location">Location (Optional)</label>
@@ -46,17 +45,7 @@
         <option v-for="severity in severities" :key="severity" :value="severity">{{ severity }}</option>
       </select>
 
-      <!-- Contact Preference -->
-      <label>
-        <input type="checkbox" v-model="formData.allowContact" />
-        I am willing to be contacted for follow-up
-      </label>
-      <input
-        type="email"
-        v-model="formData.contactEmail"
-        v-if="formData.allowContact"
-        placeholder="Enter your email (optional)"
-      />
+      
 
       <!-- Submit Button -->
       <button type="submit">Submit Report</button>

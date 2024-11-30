@@ -1,41 +1,30 @@
 <template>
   <div id="app">
-    <h1 style="text-align: center; margin: 20px;">Cybersecurity Map of India</h1>
-    <!-- Cybersecurity Map Component -->
-    <CybersecurityMap />
-    <!-- Incident Report Form Component -->
-    <IncidentReportForm />
+    <DataBreachPage />
   </div>
 </template>
 
 <script>
-import CybersecurityMap from './components/CybersecurityMap.vue';
-import IncidentReportForm from './components/IncidentReportForm.vue';
+import DataBreachPage from "./components/DataBreachPage.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    CybersecurityMap,
-    IncidentReportForm,
+    DataBreachPage,
   },
 };
 </script>
 
 <style>
+/* Global Styles */
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: #101320;
-  color: #ffffff;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #fff;
 }
-
-h1 {
-  color: #0ff;
-}
-
 #app {
-  max-width: 1200px;
-  margin: auto;
-  padding: 20px;
+  text-align: center;
 }
 </style>
