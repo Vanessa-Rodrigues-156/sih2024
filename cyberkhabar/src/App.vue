@@ -4,6 +4,7 @@
   <div id="app">
     <HelloWorld />
   </div>
+  </div>
 </template>
 
 <script>
