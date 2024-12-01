@@ -1,12 +1,10 @@
 <template>
   <div class="container">
-    <!-- Header (same as before) -->
   <!-- Header -->
     <header class="header">
       <nav class="navbar">
         <!-- Logo -->
-        <div class="logo">Cyber Khabar</div>
-
+        <div class="logo">Cyber Khabar</div> 
         <!-- Navigation Links -->
         <div class="nav-items">
           <input
