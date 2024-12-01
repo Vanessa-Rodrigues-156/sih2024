@@ -1,7 +1,6 @@
 <template>
   <div id="cybersecurity-map-container" class="dark-theme">
     <div id="cybersecurity-map"></div>
-
     <!-- Sidebar for Cyberattack Information -->
     <div v-if="showSidebar" class="sidebar">
       <h2>Latest Cyberattack</h2>
@@ -20,18 +19,15 @@
           <li v-for="(log, index) in attackLogs" :key="index">{{ log }}</li>
         </ul>
       </div>
-
       <hr />
       
       <p><strong>Total Attacks Simulated:</strong> {{ totalAttacks }}</p>
     </div>
   </div>
 </template>
-
 <script>
 import * as echarts from "echarts";
 import "echarts-gl";
-
 export default {
   name: "CybersecurityMap",
   data() {
@@ -53,24 +49,20 @@ export default {
   methods: {
     async initMap() {
       const chart = echarts.init(document.getElementById("cybersecurity-map"));
-
       try {
         const response = await fetch("/india.json");
         const indiaGeoJSON = await response.json();
         echarts.registerMap("india", indiaGeoJSON);
-
         const indianBounds = {
           latMin: 6,
           latMax: 35,
           lonMin: 68,
           lonMax: 97,
         };
-
         const generateRandomExternalCountry = () => ({
           lat: Math.random() * 90 - 45,
           lon: Math.random() * 360 - 180,
         });
-
         const generateRandomPointInIndia = () => ({
           lat:
             Math.random() * (indianBounds.latMax - indianBounds.latMin) +
@@ -79,7 +71,6 @@ export default {
             Math.random() * (indianBounds.lonMax - indianBounds.lonMin) +
             indianBounds.lonMin,
         });
-
         const attackNames = [
           "Phishing Attack",
           "DDoS Attack",
@@ -88,11 +79,9 @@ export default {
           "Man-in-the-Middle Attack",
           "Zero-Day Exploit",
         ];
-
         const severities = ["Low", "Medium", "High", "Critical"];
         const attackTypes = ["Phishing", "DDoS", "Ransomware", "Malware"];
         const regions = ["North India", "South India", "East India", "West India"];
-
         const generateRandomCyberattack = () => {
           const attack = attackNames[Math.floor(Math.random() * attackNames.length)];
           const severity = severities[Math.floor(Math.random() * severities.length)];
@@ -101,7 +90,6 @@ export default {
           const timestamp = new Date().toLocaleString();
           return { attack, severity, attackType, affectedRegion, timestamp };
         };
-
         const option = {
           backgroundColor: "#101320",
           geo: {
@@ -155,19 +143,15 @@ export default {
           ],
           animation: false,
         };
-
         chart.setOption(option);
-
         const connections = [];
         const points = [];
         let highlightIndex = null;
-
         const updateConnections = () => {
           const connection = {
             from: generateRandomExternalCountry(),
             to: generateRandomPointInIndia(),
           };
-
           const newLine = {
             coords: [
               [connection.from.lon, connection.from.lat],
@@ -178,15 +162,11 @@ export default {
             name: `Point-${Math.random().toString(36).substring(7)}`,
             value: [connection.to.lon, connection.to.lat],
           };
-
           connections.push(newLine);
           points.push(newPoint);
-
           if (connections.length > 20) connections.shift();
           if (points.length > 20) points.shift();
-
           highlightIndex = connections.length - 1;
-
           chart.setOption({
             series: [
               {
@@ -202,20 +182,16 @@ export default {
               { data: points },
             ],
           });
-
           const { attack, severity, attackType, affectedRegion, timestamp } = generateRandomCyberattack();
           this.attackName = attack;
           this.severity = severity;
           this.attackType = attackType;
           this.affectedRegion = affectedRegion;
           this.timestamp = timestamp;
-
           this.attackLogs.push(`Attack detected: ${attack} at ${timestamp}`);
           if (this.attackLogs.length > 10) this.attackLogs.shift(); // Limit log length
-
           this.totalAttacks += 1;
         };
-
         setInterval(updateConnections, 1500);
       } catch (error) {
         console.error("Error loading GeoJSON:", error);
@@ -224,7 +200,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 #cybersecurity-map-container {
   display: flex;
@@ -233,7 +208,6 @@ export default {
   height: 100vh;
   background-color: #101320;
 }
-
 #cybersecurity-map {
   width: 75%;
   height: 90%;
@@ -241,7 +215,6 @@ export default {
   box-shadow: 0 0 20px #0ff;
   border-radius: 15px;
 }
-
 .sidebar {
   position: sticky;
   top: 10%;
@@ -256,30 +229,24 @@ export default {
   max-height: 90%;
   overflow-y: auto;
 }
-
 .sidebar h2 {
   margin-bottom: 10px;
 }
-
 .sidebar p {
   margin: 5px 0;
 }
-
 .sidebar ul {
   list-style-type: none;
   padding-left: 0;
 }
-
 .sidebar ul li {
   margin: 5px 0;
 }
-
 .live-updates-container {
   max-height: 200px; /* Set a max height for live updates */
   overflow-y: auto; /* Enable scrolling */
   padding-right: 10px; /* Add a bit of padding for scrollbar */
 }
-
 .dark-theme {
   color: #00ffcc;
   font-family: "Roboto", sans-serif;
