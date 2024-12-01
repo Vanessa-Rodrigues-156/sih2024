@@ -3,35 +3,25 @@
     <header class="app-header">
       <h1>Cybersecurity News Portal</h1>
     </header>
-    <NewsPage />
+    <LandingPage />
     <footer class="app-footer">
-      <p>&copy; 2024 Cybersecurity News. All rights reserved.</p>
+      <p>&copy; 2024 Cyber Khabar. All rights reserved.</p>
     </footer>
   </div>
 </template>
 
 <script>
-import NewsPage from "./components/NewsPage.vue";
+import LandingPage from "./components/LandingPage.vue";
 
 export default {
   name: "App",
   components: {
-    NewsPage,
+    LandingPage,
   },
 };
 </script>
 
-<style>
-/* Global Styles */
-#app {
-  font-family: Arial, sans-serif;
-  color: #333;
-  text-align: center;
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-}
-
+<style scoped>
 /* Header Styles */
 .app-header {
   background: #007bff;
