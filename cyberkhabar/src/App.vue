@@ -3,16 +3,16 @@
     <h1>Cyber Khabar</h1>
   </div>
   <div id="app">
-    <HelloWorld />
+    <Homepage />
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/homepage.vue";
+import Homepage from "./components/homepage.vue";
 
 export default {
   components: {
-    HelloWorld,
+    Homepage,
   },
 };
 </script>

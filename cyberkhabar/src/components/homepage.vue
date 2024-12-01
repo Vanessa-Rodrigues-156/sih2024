@@ -2,35 +2,35 @@
   <div id="app" class="dashboard">
     <!-- Left Filters -->
     <aside class="filters">
-      <h3>Filters</h3>
-      <div>
-        <h4>Type of Attack</h4>
-        <div v-for="type in attackTypes" :key="type">
+      <h3><i class="fas fa-filter"></i> Filters</h3>
+      <div class="filter-section">
+        <h4><i class="fas fa-shield-alt"></i> Type of Attack</h4>
+        <div v-for="type in attackTypes" :key="type" class="filter-item">
           <input type="checkbox" :id="type" :value="type" v-model="selectedFilters.type" />
           <label :for="type">{{ type }}</label>
         </div>
       </div>
-      <div>
-        <h4>Impact Level</h4>
-        <div v-for="level in impactLevels" :key="level">
+      <div class="filter-section">
+        <h4><i class="fas fa-exclamation-triangle"></i> Impact Level</h4>
+        <div v-for="level in impactLevels" :key="level" class="filter-item">
           <input type="checkbox" :id="level" :value="level" v-model="selectedFilters.impact" />
           <label :for="level">{{ level }}</label>
         </div>
       </div>
-      <div>
-        <h4>Area of Attack</h4>
-        <div v-for="location in locations" :key="location">
+      <div class="filter-section">
+        <h4><i class="fas fa-globe"></i> Area of Attack</h4>
+        <div v-for="location in locations" :key="location" class="filter-item">
           <input type="checkbox" :id="location" :value="location" v-model="selectedFilters.location" />
           <label :for="location">{{ location }}</label>
         </div>
       </div>
-      <div>
-        <h4>Relevance</h4>
+      <div class="filter-section">
+        <h4><i class="fas fa-star"></i> Relevance</h4>
         <input type="range" v-model="selectedFilters.relevance" min="1" max="100" />
         <label>{{ selectedFilters.relevance }}%</label>
       </div>
-      <div>
-        <h4>Recency</h4>
+      <div class="filter-section">
+        <h4><i class="fas fa-clock"></i> Recency</h4>
         <select v-model="selectedFilters.recency">
           <option value="1">Last Day</option>
           <option value="7">Last Week</option>
@@ -41,36 +41,59 @@
 
     <!-- Main Content -->
     <main class="content">
-      <!-- Marquee -->
+      <!-- Single line Marquee -->
       <div class="marquee">
-        <marquee>
-          <div v-for="headline in newsHeadlines" :key="headline.id" class="marquee-item">
-            {{ headline.title }}
-          </div>
-        </marquee>
+        <div class="marquee-content">
+          <span v-for="headline in newsHeadlines" :key="headline.id" class="marquee-item">
+            {{ headline.title }}     |    
+          </span>
+        </div>
       </div>
 
-      <!-- News Display -->
-      <section class="news">
-        <h2>Major Ransomware Attack Disrupts</h2>
-        <div class="news-item" v-for="news in filteredNews" :key="news.id">
-          <img :src="news.image" alt="news" />
-          <h3>{{ news.title }}</h3>
-          <p>{{ news.description }}</p>
+      <!-- News Display with Infinite Scroll -->
+      <section class="news" v-infinite-scroll="loadMore">
+        <h2><i class="fas fa-newspaper"></i> Cyber Threat Updates</h2>
+        <div class="news-container">
+          <div v-for="news in filteredNews" :key="news.id" class="news-item">
+            <img :src="news.image" :alt="news.title" class="news-image"/>
+            <div class="news-content">
+              <h3>{{ news.title }}</h3>
+              <p>{{ news.description }}</p>
+              <router-link :to="'/news/' + news.id" class="read-more">Read More →</router-link>
+            </div>
+          </div>
         </div>
       </section>
     </main>
 
     <!-- Right Statistics -->
     <aside class="statistics">
-      <h3>Current Status</h3>
-      <p>Severity: {{ currentStats.severity }}</p>
-      <p>Category: {{ currentStats.category }}</p>
-      <p>Origin: {{ currentStats.origin }}</p>
-      <p>First Seen: {{ currentStats.firstSeen }}</p>
-      <p>Last Seen: {{ currentStats.lastSeen }}</p>
-      <h4>Related Incidents</h4>
-      <p>{{ currentStats.relatedIncidents }} incidents</p>
+      <h3><i class="fas fa-chart-line"></i> Current Status</h3>
+      <div class="stats-item">
+        <i class="fas fa-radiation-alt"></i>
+        <span>Severity: {{ currentStats.severity }}</span>
+      </div>
+      <div class="stats-item">
+        <i class="fas fa-tag"></i>
+        <span>Category: {{ currentStats.category }}</span>
+      </div>
+      <div class="stats-item">
+        <i class="fas fa-globe"></i>
+        <span>Origin: {{ currentStats.origin }}</span>
+      </div>
+      <div class="stats-item">
+        <i class="fas fa-calendar-alt"></i>
+        <span>First Seen: {{ currentStats.firstSeen }}</span>
+      </div>
+      <div class="stats-item">
+        <i class="fas fa-history"></i>
+        <span>Last Seen: {{ currentStats.lastSeen }}</span>
+      </div>
+      <div class="related-incidents">
+        <h4>Related Incidents</h4>
+        <span class="incident-number">{{ currentStats.relatedIncidents }}</span>
+        <span class="incident-text">incidents</span>
+      </div>
     </aside>
   </div>
 </template>
@@ -98,8 +121,21 @@ export default {
           id: 1,
           title: "Former Fortnite Player Accused of Meme Coin Scam",
           description: "An Australian former Fortnite player has been accused of stealing $3.5M through meme coin scams.",
-          image: "path/to/image.jpg",
+          image: "/images/crypto-scam.jpg",
         },
+        {
+          id: 2,
+          title: "Major Banking System Breach Detected",
+          description: "Several banks report unauthorized access attempts from sophisticated threat actors.",
+          image: "/images/bank-breach.jpg",
+        },
+        {
+          id: 3,
+          title: "New Ransomware Strain Targets Healthcare",
+          description: "Healthcare facilities worldwide on high alert as new ransomware variant emerges.",
+          image: "/images/healthcare-cyber.jpg",
+        },
+        // Add more news items
       ],
       currentStats: {
         severity: "Critical",
@@ -121,37 +157,99 @@ export default {
       });
     },
   },
+  methods: {
+    loadMore() {
+      // Implement infinite scroll logic
+    }
+  }
 };
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
 .dashboard {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 20px;
-  padding-left: 20px;
-  color: #fff;
+  padding: 20px;
+  font-family: 'Share Tech Mono', monospace;
+  background-color: #1a1b26;
 }
 .filters, .statistics {
   background-color: #292c36;
   border-radius: 10px;
-  padding: 15px;
+  padding: 20px;
+  text-align: left;
 }
-.content {
-  background-color: #2e313c;
-  border-radius: 10px;
-  padding: 15px;
+.filter-section {
+  margin-bottom: 20px;
+}
+.filter-item {
+  padding: 5px 0;
+  transition: all 0.3s ease;
+}
+.filter-item:hover {
+  background-color: #3c3f4a;
 }
 .marquee {
   background-color: #3c3f4a;
   padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.marquee-content {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+}
+.news-container {
+  display: grid;
+  gap: 20px;
 }
 .news-item {
+  background-color: #3c3f4a;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+.news-item:hover {
+  transform: translateY(-5px);
+}
+.news-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+.incident-number {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3em;
+  color: #00ff88;
+  display: block;
+  text-align: center;
+}
+h2, h3, h4 {
+  font-family: 'Orbitron', sans-serif;
+  color: #00ff88;
+}
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.read-more {
+  color: #00ff88;
+  text-decoration: none;
+  font-weight: bold;
+}
+.stats-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 10px 0;
-  padding: 10px;
+}
+/* Add hover effects for interactivity */
+.filter-item:hover, .stats-item:hover {
+  cursor: pointer;
   background-color: #3c3f4a;
   border-radius: 5px;
+  padding-left: 10px;
 }
 </style>

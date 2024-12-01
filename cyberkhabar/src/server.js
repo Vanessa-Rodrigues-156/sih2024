@@ -1,11 +1,11 @@
-const express = require("express");
-const { Pool } = require("pg");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import express from "express";
+import { Pool } from "pg";
+import { json } from "body-parser";
+import cors from "cors";
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(json());
 
 // PostgreSQL Configuration
 const pool = new Pool({
