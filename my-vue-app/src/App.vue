@@ -6,11 +6,12 @@
 
 <script>
 import DataBreachPage from "./components/DataBreachPage.vue";
-
+import reportpg from "./components/reportpage.vue";
 export default {
   name: "App",
   components: {
     DataBreachPage,
+    reportpg,
   },
 };
 </script>
