@@ -129,7 +129,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 20px;
-  padding: 20px;
+  padding-left: 20px;
   color: #fff;
 }
 .filters, .statistics {
