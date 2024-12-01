@@ -1,32 +1,59 @@
 <template>
-  <div id="app" class="dashboard">
+  <div
+    id="app"
+    class="dashboard">
     <!-- Left Filters -->
     <aside class="filters">
       <h3><i class="fas fa-filter"></i> Filters</h3>
       <div class="filter-section">
         <h4><i class="fas fa-shield-alt"></i> Type of Attack</h4>
-        <div v-for="type in attackTypes" :key="type" class="filter-item">
-          <input type="checkbox" :id="type" :value="type" v-model="selectedFilters.type" />
+        <div
+          v-for="type in attackTypes"
+          :key="type"
+          class="filter-item">
+          <input
+            type="checkbox"
+            :id="type"
+            :value="type"
+            v-model="selectedFilters.type" />
           <label :for="type">{{ type }}</label>
         </div>
       </div>
       <div class="filter-section">
         <h4><i class="fas fa-exclamation-triangle"></i> Impact Level</h4>
-        <div v-for="level in impactLevels" :key="level" class="filter-item">
-          <input type="checkbox" :id="level" :value="level" v-model="selectedFilters.impact" />
+        <div
+          v-for="level in impactLevels"
+          :key="level"
+          class="filter-item">
+          <input
+            type="checkbox"
+            :id="level"
+            :value="level"
+            v-model="selectedFilters.impact" />
           <label :for="level">{{ level }}</label>
         </div>
       </div>
       <div class="filter-section">
         <h4><i class="fas fa-globe"></i> Area of Attack</h4>
-        <div v-for="location in locations" :key="location" class="filter-item">
-          <input type="checkbox" :id="location" :value="location" v-model="selectedFilters.location" />
+        <div
+          v-for="location in locations"
+          :key="location"
+          class="filter-item">
+          <input
+            type="checkbox"
+            :id="location"
+            :value="location"
+            v-model="selectedFilters.location" />
           <label :for="location">{{ location }}</label>
         </div>
       </div>
       <div class="filter-section">
         <h4><i class="fas fa-star"></i> Relevance</h4>
-        <input type="range" v-model="selectedFilters.relevance" min="1" max="100" />
+        <input
+          type="range"
+          v-model="selectedFilters.relevance"
+          min="1"
+          max="100" />
         <label>{{ selectedFilters.relevance }}%</label>
       </div>
       <div class="filter-section">
@@ -44,22 +71,37 @@
       <!-- Single line Marquee -->
       <div class="marquee">
         <div class="marquee-content">
-          <span v-for="headline in newsHeadlines" :key="headline.id" class="marquee-item">
-            {{ headline.title }}     |    
+          <span
+            v-for="headline in newsHeadlines"
+            :key="headline.id"
+            class="marquee-item">
+            {{ headline.title }} |
           </span>
         </div>
       </div>
 
       <!-- News Display with Infinite Scroll -->
-      <section class="news" v-infinite-scroll="loadMore">
+      <section
+        class="news"
+        v-infinite-scroll="loadMore">
         <h2><i class="fas fa-newspaper"></i> Cyber Threat Updates</h2>
         <div class="news-container">
-          <div v-for="news in filteredNews" :key="news.id" class="news-item">
-            <img :src="news.image" :alt="news.title" class="news-image"/>
+          <div
+            v-for="news in filteredNews"
+            :key="news.id"
+            class="news-item">
+            <img
+              :src="news.image"
+              :alt="news.title"
+              class="news-image" />
             <div class="news-content">
               <h3>{{ news.title }}</h3>
               <p>{{ news.description }}</p>
-              <router-link :to="'/news/' + news.id" class="read-more">Read More →</router-link>
+              <router-link
+                :to="'/news/' + news.id"
+                class="read-more"
+                >Read More →</router-link
+              >
             </div>
           </div>
         </div>
@@ -102,7 +144,13 @@
 export default {
   data() {
     return {
-      attackTypes: ["Phishing", "Hacking and Exploits", "Ransomware", "Malware"],
+      // Mock data for news headlines but add the backend logic here to get data from the database ~vanessa 
+      attackTypes: [
+        "Phishing",
+        "Hacking and Exploits",
+        "Ransomware",
+        "Malware",
+      ],
       impactLevels: ["Low", "Medium", "High"],
       locations: ["USA", "Europe", "Asia", "Global"],
       selectedFilters: {
@@ -120,19 +168,22 @@ export default {
         {
           id: 1,
           title: "Former Fortnite Player Accused of Meme Coin Scam",
-          description: "An Australian former Fortnite player has been accused of stealing $3.5M through meme coin scams.",
+          description:
+            "An Australian former Fortnite player has been accused of stealing $3.5M through meme coin scams.",
           image: "/images/crypto-scam.jpg",
         },
         {
           id: 2,
           title: "Major Banking System Breach Detected",
-          description: "Several banks report unauthorized access attempts from sophisticated threat actors.",
+          description:
+            "Several banks report unauthorized access attempts from sophisticated threat actors.",
           image: "/images/bank-breach.jpg",
         },
         {
           id: 3,
           title: "New Ransomware Strain Targets Healthcare",
-          description: "Healthcare facilities worldwide on high alert as new ransomware variant emerges.",
+          description:
+            "Healthcare facilities worldwide on high alert as new ransomware variant emerges.",
           image: "/images/healthcare-cyber.jpg",
         },
         // Add more news items
@@ -147,12 +198,15 @@ export default {
       },
     };
   },
+  // perfect ~vanessa 
   computed: {
     filteredNews() {
       return this.news.filter((item) => {
         return (
-          (this.selectedFilters.type.length === 0 || this.selectedFilters.type.includes(item.type)) &&
-          (this.selectedFilters.impact.length === 0 || this.selectedFilters.impact.includes(item.impact))
+          (this.selectedFilters.type.length === 0 ||
+            this.selectedFilters.type.includes(item.type)) &&
+          (this.selectedFilters.impact.length === 0 ||
+            this.selectedFilters.impact.includes(item.impact))
         );
       });
     },
@@ -160,22 +214,45 @@ export default {
   methods: {
     loadMore() {
       // Implement infinite scroll logic
-    }
-  }
+      //imcomplete yet to be done ~vanessa 
+      const page = Math.ceil(this.news.length / 10) + 1;
+            const loading = true;
+            
+            // Simulating API call with setTimeout
+            setTimeout(async () => {
+              try {
+                // Replace this with actual API call
+                const response = await fetch(`/api/news?page=${page}&limit=10`);
+                const newItems = await response.json();
+                
+                if (newItems.length > 0) {
+                  this.news = [...this.news, ...newItems];
+                }
+                
+                loading = false;
+              } catch (error) {
+                console.error('Error loading more news:', error);
+                loading = false;
+              }
+            }, 1000);
+      
+    },
+  },
 };
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap");
 .dashboard {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 20px;
   padding: 20px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: "Share Tech Mono", monospace;
   background-color: #1a1b26;
 }
-.filters, .statistics {
+.filters,
+.statistics {
   background-color: #292c36;
   border-radius: 10px;
   padding: 20px;
@@ -202,8 +279,11 @@ export default {
   animation: marquee 20s linear infinite;
 }
 .news-container {
+  padding-top:10px;
   display: grid;
   gap: 20px;
+  /* overflow-y: scroll;
+  max-height: 60%; */
 }
 .news-item {
   background-color: #3c3f4a;
@@ -220,19 +300,32 @@ export default {
   object-fit: cover;
 }
 .incident-number {
-  font-family: 'Orbitron', sans-serif;
+  font-family: "Orbitron", sans-serif;
   font-size: 3em;
   color: #00ff88;
   display: block;
   text-align: center;
 }
-h2, h3, h4 {
-  font-family: 'Orbitron', sans-serif;
+.incident-text {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.2em;
+  color: #ffffff;
+  display: block;
+  text-align: center;
+}
+h2,
+h3,
+h4 {
+  font-family: "Orbitron", sans-serif;
   color: #00ff88;
 }
 @keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 .read-more {
   color: #00ff88;
@@ -246,7 +339,8 @@ h2, h3, h4 {
   margin: 10px 0;
 }
 /* Add hover effects for interactivity */
-.filter-item:hover, .stats-item:hover {
+.filter-item:hover,
+.stats-item:hover {
   cursor: pointer;
   background-color: #3c3f4a;
   border-radius: 5px;
