@@ -1,21 +1,6 @@
 <template>
   <div class="landing-page">
-    <!-- Header Section -->
-    <header class="header">
-      <router-link to="/" class="logo">
-        <span>Cyber Incident Monitor</span>
-      </router-link>
-      <nav class="nav">
-        <router-link to="/dashboard" class="nav-item">Dashboard</router-link>
-        <router-link to="/incidents" class="nav-item">Incidents</router-link>
-        <router-link to="/alerts" class="nav-item">Alerts</router-link>
-        <router-link to="/integrations" class="nav-item">Integrations</router-link>
-        <router-link to="/settings" class="nav-item">Settings</router-link>
-      </nav>
-      <button class="user-avatar">
-        <img src="/placeholder.svg" width="32" height="32" alt="User Avatar" />
-      </button>
-    </header>
+    
 
     <!-- Main Section -->
     <main class="main-content">
@@ -104,38 +89,7 @@ export default {
 }
 
 /* Header Styles */
-.header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #101320;
-  border-bottom: 2px solid #0ff;
-}
 
-.logo {
-  font-size: 24px;
-  color: #0ff;
-  display: flex;
-  align-items: center;
-  transition: color 0.3s ease;
-}
-
-.nav {
-  display: flex;
-  gap: 15px;
-}
-
-.nav-item {
-  color: #cce7ff;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.nav-item:hover {
-  color: #fff;
-}
 
 /* Main Content */
 .main-content {
