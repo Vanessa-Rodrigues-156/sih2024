@@ -204,7 +204,21 @@ export default {
           title: "New Ransomware Strain Targets Healthcare",
           description: "Healthcare facilities worldwide on high alert as new ransomware variant emerges.",
           image: "/images/healthcare-cyber.jpg",
+          image: "/images/crypto-scam.jpg",
         },
+        {
+          id: 2,
+          title: "Major Banking System Breach Detected",
+          description: "Several banks report unauthorized access attempts from sophisticated threat actors.",
+          image: "/images/bank-breach.jpg",
+        },
+        {
+          id: 3,
+          title: "New Ransomware Strain Targets Healthcare",
+          description: "Healthcare facilities worldwide on high alert as new ransomware variant emerges.",
+          image: "/images/healthcare-cyber.jpg",
+        },
+        // Add more news items
         // Add more news items
       ],
       currentStats: {
@@ -227,6 +241,11 @@ export default {
       });
     },
   },
+  methods: {
+    loadMore() {
+      // Implement infinite scroll logic
+    }
+  }
   methods: {
     loadMore() {
       // Implement infinite scroll logic
@@ -256,6 +275,11 @@ export default {
 
 .filter-section {
   margin-bottom: 20px;
+  padding: 20px;
+  text-align: left;
+}
+.filter-section {
+  margin-bottom: 20px;
 }
 
 .filter-item {
@@ -263,6 +287,12 @@ export default {
   transition: all 0.3s ease;
 }
 
+.filter-item:hover {
+  background-color: #3c3f4a;
+.filter-item {
+  padding: 5px 0;
+  transition: all 0.3s ease;
+}
 .filter-item:hover {
   background-color: #3c3f4a;
 }
@@ -282,9 +312,56 @@ export default {
 .news-container {
   display: grid;
   gap: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.marquee-content {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+}
+.news-container {
+  display: grid;
+  gap: 20px;
 }
 
 .news-item {
+  background-color: #3c3f4a;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+.news-item:hover {
+  transform: translateY(-5px);
+}
+.news-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+.incident-number {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3em;
+  color: #00ff88;
+  display: block;
+  text-align: center;
+}
+h2, h3, h4 {
+  font-family: 'Orbitron', sans-serif;
+  color: #00ff88;
+}
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.read-more {
+  color: #00ff88;
+  text-decoration: none;
+  font-weight: bold;
+}
+.stats-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   background-color: #3c3f4a;
   border-radius: 10px;
   overflow: hidden;
@@ -332,6 +409,10 @@ h2, h3, h4 {
   margin: 10px 0;
 }
 
+/* Add hover effects for interactivity */
+.filter-item:hover, .stats-item:hover {
+  cursor: pointer;
+}
 /* Add hover effects for interactivity */
 .filter-item:hover, .stats-item:hover {
   cursor: pointer;
