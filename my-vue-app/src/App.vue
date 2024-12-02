@@ -39,12 +39,13 @@
 </template>
 
 <script>
-import NewsPage from './components/NewsPage.vue';
-import LandingPage1 from './components/LandingPage1.vue';
-import CybersecurityMap from './components/CybersecurityMap.vue';
-import LandingPage from './components/LandingPage.vue';
-import IncidentReportForm from './components/IncidentReportForm.vue';
+// Import the LandingPage1 component
 
+import NewsPage from './views/NewsPage.vue';
+import LandingPage1 from './views/LandingPage1.vue';
+import CybersecurityMap from './views/CybersecurityMap.vue';
+import LandingPage from './views/LandingPage.vue';
+import IncidentReportForm from './views/IncidentReportForm.vue';
 export default {
   name: 'App',
   components: {

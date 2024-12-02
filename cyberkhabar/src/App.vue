@@ -1,30 +1,91 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const isLoggedIn = ref(false)
+const showLoginDialog = ref(false)
+
+onMounted(() => {
+  // Check if user is logged in (e.g. by checking localStorage or session)
+  const token = localStorage.getItem('userToken')
+  if (token) {
+    isLoggedIn.value = true
+    router.push('/home')
+  } else {
+    showLoginDialog.value = true
+  }
+})
+
+const handleLogin = () => {
+  // Add login logic here
+  isLoggedIn.value = false 
+  showLoginDialog.value = false
+  router.push('/home')
+}
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="app">
+    <dialog v-if="showLoginDialog" class="login-dialog">
+      <h2>Login</h2>
+      <form @submit.prevent="handleLogin">
+        <div class="form-group">
+          <label>Username:</label>
+          <input type="text" required>
+        </div>
+        <div class="form-group">
+          <label>Password:</label>
+          <input type="password" required>
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    </dialog>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.app {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+.login-dialog {
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+.form-group {
+  margin: 10px 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #45a049;
 }
 </style>
