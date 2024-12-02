@@ -1,9 +1,11 @@
 import { createApp } from "vue";
-import App from "./components/App.vue";
+import App from "./App.vue";
 import "./style.css";
 import axios from "axios";
 
-createApp(App).mount("#app");
+const app = createApp(App);
+
+app.mount("#app");
 
 axios
   .get("http://localhost:3001/api/data")

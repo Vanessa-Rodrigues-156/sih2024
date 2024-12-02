@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import CyberMonitor from './components/CyberMonitor.vue'
-import SomeComponent from './components/SomeComponent.vue'
+import CyberMonitor from './components/cybermonitor.vue'
+import SomeComponent from './components/somecomponent.vue'
 
 const isLoading = ref(false)
 const monitorData = ref(null)
@@ -14,7 +14,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="app-container">
+  <div class="app">
     <header class="app-header">
       <h1>CyberKhabar</h1>
       <nav class="main-nav">
@@ -37,7 +37,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.app-container {
+.app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
