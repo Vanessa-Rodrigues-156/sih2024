@@ -1,12 +1,16 @@
 <template>
   <div id="app">
-    <DataBreachPage />
+    <nav>
+      <router-link to="/">Data Breach</router-link> |
+      <router-link to="/report">Report</router-link>
+    </nav>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import DataBreachPage from "./components/DataBreachPage.vue";
-import reportpg from "./components/reportpage.vue";
+import DataBreachPage from "./views/DataBreachPage.vue";
+import reportpg from "./views/reportpage.vue";
 export default {
   name: "App",
   components: {
@@ -27,5 +31,17 @@ body {
 }
 #app {
   text-align: center;
+}
+nav {
+  padding: 30px;
+}
+nav a {
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+}
+nav a.router-link-active {
+  color: #42b983;
 }
 </style>
