@@ -77,36 +77,35 @@
         </section>
       </main>
 
-      <!-- Right Statistics -->
-      <aside class="statistics">
-        <h3><i class="fas fa-chart-line"></i> Current Status</h3>
-        <div class="stats-item">
-          <i class="fas fa-radiation-alt"></i>
-          <span>Severity: {{ currentStats.severity }}</span>
-        </div>
-        <div class="stats-item">
-          <i class="fas fa-tag"></i>
-          <span>Category: {{ currentStats.category }}</span>
-        </div>
-        <div class="stats-item">
-          <i class="fas fa-globe"></i>
-          <span>Origin: {{ currentStats.origin }}</span>
-        </div>
-        <div class="stats-item">
-          <i class="fas fa-calendar-alt"></i>
-          <span>First Seen: {{ currentStats.firstSeen }}</span>
-        </div>
-        <div class="stats-item">
-          <i class="fas fa-history"></i>
-          <span>Last Seen: {{ currentStats.lastSeen }}</span>
-        </div>
-        <div class="related-incidents">
-          <h4>Related Incidents</h4>
-          <span class="incident-number">{{ currentStats.relatedIncidents }}</span>
-          <span class="incident-text">incidents</span>
-        </div>
-      </aside>
-    </div>
+    <!-- Right Statistics -->
+    <aside class="statistics">
+      <h3><i class="fas fa-chart-line"></i> Current Status</h3>
+      <div class="stats-item">
+        <i class="fas fa-radiation-alt"></i>
+        <span>Severity: {{ currentStats.severity }}</span>
+      </div>
+      <div class="stats-item">
+        <i class="fas fa-tag"></i>
+        <span>Category: {{ currentStats.category }}</span>
+      </div>
+      <div class="stats-item">
+        <i class="fas fa-globe"></i>
+        <span>Origin: {{ currentStats.origin }}</span>
+      </div>
+      <div class="stats-item">
+        <i class="fas fa-calendar-alt"></i>
+        <span>First Seen: {{ currentStats.firstSeen }}</span>
+      </div>
+      <div class="stats-item">
+        <i class="fas fa-history"></i>
+        <span>Last Seen: {{ currentStats.lastSeen }}</span>
+      </div>
+      <div class="related-incidents">
+        <h4>Related Incidents</h4>
+        <span class="incident-number">{{ currentStats.relatedIncidents }}</span>
+        <span class="incident-text">incidents</span>
+      </div>
+    </aside>
   </div>
 </template>
 
@@ -172,7 +171,13 @@
 export default {
   data() {
     return {
-      attackTypes: ["Phishing", "Hacking and Exploits", "Ransomware", "Malware"],
+      // Mock data for news headlines but add the backend logic here to get data from the database ~vanessa 
+      attackTypes: [
+        "Phishing",
+        "Hacking and Exploits",
+        "Ransomware",
+        "Malware",
+      ],
       impactLevels: ["Low", "Medium", "High"],
       locations: ["USA", "Europe", "Asia", "Global"],
       selectedFilters: {
@@ -190,7 +195,8 @@ export default {
         {
           id: 1,
           title: "Former Fortnite Player Accused of Meme Coin Scam",
-          description: "An Australian former Fortnite player has been accused of stealing $3.5M through meme coin scams.",
+          description:
+            "An Australian former Fortnite player has been accused of stealing $3.5M through meme coin scams.",
           image: "/images/crypto-scam.jpg",
         },
         {
@@ -216,6 +222,21 @@ export default {
           id: 3,
           title: "New Ransomware Strain Targets Healthcare",
           description: "Healthcare facilities worldwide on high alert as new ransomware variant emerges.",
+          image: "/images/healthcare-cyber.jpg",
+          image: "/images/crypto-scam.jpg",
+        },
+        {
+          id: 2,
+          title: "Major Banking System Breach Detected",
+          description:
+            "Several banks report unauthorized access attempts from sophisticated threat actors.",
+          image: "/images/bank-breach.jpg",
+        },
+        {
+          id: 3,
+          title: "New Ransomware Strain Targets Healthcare",
+          description:
+            "Healthcare facilities worldwide on high alert as new ransomware variant emerges.",
           image: "/images/healthcare-cyber.jpg",
         },
         // Add more news items
@@ -231,12 +252,15 @@ export default {
       },
     };
   },
+  // perfect ~vanessa 
   computed: {
     filteredNews() {
       return this.news.filter((item) => {
         return (
-          (this.selectedFilters.type.length === 0 || this.selectedFilters.type.includes(item.type)) &&
-          (this.selectedFilters.impact.length === 0 || this.selectedFilters.impact.includes(item.impact))
+          (this.selectedFilters.type.length === 0 ||
+            this.selectedFilters.type.includes(item.type)) &&
+          (this.selectedFilters.impact.length === 0 ||
+            this.selectedFilters.impact.includes(item.impact))
         );
       });
     },
@@ -244,25 +268,43 @@ export default {
   methods: {
     loadMore() {
       // Implement infinite scroll logic
-    }
-  }
-  methods: {
-    loadMore() {
-      // Implement infinite scroll logic
-    }
-  }
+      //imcomplete yet to be done ~vanessa 
+      const page = Math.ceil(this.news.length / 10) + 1;
+            const loading = true;
+            
+            // Simulating API call with setTimeout
+            setTimeout(async () => {
+              try {
+                // Replace this with actual API call
+                const response = await fetch(`/api/news?page=${page}&limit=10`);
+                const newItems = await response.json();
+                
+                if (newItems.length > 0) {
+                  this.news = [...this.news, ...newItems];
+                }
+                
+                loading = false;
+              } catch (error) {
+                console.error('Error loading more news:', error);
+                loading = false;
+              }
+            }, 1000);
+      
+    },
+  },
 };
 </script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
 
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap");
 .dashboard {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 20px;
   padding: 20px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: "Share Tech Mono", monospace;
   background-color: #1a1b26;
 }
 
@@ -320,8 +362,11 @@ export default {
   animation: marquee 20s linear infinite;
 }
 .news-container {
+  padding-top:10px;
   display: grid;
   gap: 20px;
+  /* overflow-y: scroll;
+  max-height: 60%; */
 }
 
 .news-item {
@@ -339,19 +384,32 @@ export default {
   object-fit: cover;
 }
 .incident-number {
-  font-family: 'Orbitron', sans-serif;
+  font-family: "Orbitron", sans-serif;
   font-size: 3em;
   color: #00ff88;
   display: block;
   text-align: center;
 }
-h2, h3, h4 {
-  font-family: 'Orbitron', sans-serif;
+.incident-text {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.2em;
+  color: #ffffff;
+  display: block;
+  text-align: center;
+}
+h2,
+h3,
+h4 {
+  font-family: "Orbitron", sans-serif;
   color: #00ff88;
 }
 @keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 .read-more {
   color: #00ff88;
@@ -379,13 +437,12 @@ h2, h3, h4 {
 }
 
 .incident-number {
-  font-family: 'Orbitron', sans-serif;
+  font-family: "Orbitron", sans-serif;
   font-size: 3em;
   color: #00ff88;
   display: block;
   text-align: center;
 }
-
 h2, h3, h4 {
   font-family: 'Orbitron', sans-serif;
   color: #00ff88;
@@ -401,17 +458,11 @@ h2, h3, h4 {
   text-decoration: none;
   font-weight: bold;
 }
-
 .stats-item {
   display: flex;
   align-items: center;
   gap: 10px;
   margin: 10px 0;
-}
-
-/* Add hover effects for interactivity */
-.filter-item:hover, .stats-item:hover {
-  cursor: pointer;
 }
 /* Add hover effects for interactivity */
 .filter-item:hover, .stats-item:hover {
