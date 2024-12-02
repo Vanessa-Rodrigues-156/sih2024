@@ -114,6 +114,7 @@ export default {
 </script>
 
 <style scoped>
+
 #incident-report-form {
   width: 50%;
   margin: auto;

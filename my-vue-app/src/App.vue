@@ -2,26 +2,27 @@
   <div id="app" class="bright-theme">
     <!-- Navigation Bar -->
     <header>
-      <h1>Cyber Khabar</h1>
+      <h1>Cybers Khabar</h1>
       <nav class="navbar">
-        <button @click="currentSection = 'newsPage'">News Portal</button>
-        <button @click="currentSection = 'incidentForm'">Report Incident</button>
-        <button @click="currentSection = 'map'">Cyber Map</button>
-        <button @click="currentSection = 'landingPage1'">Cyberstats</button>
-        <button @click="currentSection = 'landingPage'">Insights & Info</button>
+       <button @click="currentSection = 'newsPage'">News Portal</button>
+          <button @click="currentSection = 'incidentForm'">Report Incident</button>
+          <button @click="currentSection = 'map'">Cyber Map</button>
+            <button @click="currentSection = 'landingPage1'">Cyber Statistics</button>
+           <button @click="currentSection = 'landingPage'">Insights & Info</button>
+      
       </nav>
     </header>
 
     <!-- Section Rendering -->
     <main>
-     <section v-if="currentSection === 'newsPage'">
-        <NewsPage />
-      </section>
       <section v-if="currentSection === 'landingPage1'">
         <LandingPage1 />
       </section>
       <section v-if="currentSection === 'map'">
         <CybersecurityMap />
+      </section>
+      <section v-if="currentSection === 'newsPage'">
+        <NewsPage />
       </section>
       <section v-if="currentSection === 'landingPage'">
         <LandingPage />
@@ -39,19 +40,18 @@
 </template>
 
 <script>
-// Import the LandingPage1 component
+import LandingPage1 from './components/LandingPage1.vue';
+import CybersecurityMap from './components/CybersecurityMap.vue';
+import NewsPage from './components/NewsPage.vue';
+import LandingPage from './components/LandingPage.vue';
+import IncidentReportForm from './components/IncidentReportForm.vue';
 
-import NewsPage from './views/NewsPage.vue';
-import LandingPage1 from './views/LandingPage1.vue';
-import CybersecurityMap from './views/CybersecurityMap.vue';
-import LandingPage from './views/LandingPage.vue';
-import IncidentReportForm from './views/IncidentReportForm.vue';
 export default {
   name: 'App',
   components: {
-    NewsPage,
     LandingPage1,
     CybersecurityMap,
+    NewsPage,
     LandingPage,
     IncidentReportForm,
   },
