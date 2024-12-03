@@ -125,7 +125,7 @@
   
   <script setup>
   import { ref } from 'vue'
-  import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
+  import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'chart.js'
   
   // Data setup
   const graphData = Array.from({ length: 12 }, (_, i) => ({
