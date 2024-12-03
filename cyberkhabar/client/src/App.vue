@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import CyberMonitor from './components/CyberMonitor.vue'
-import SomeComponent from './components/SomeComponent.vue'
+import CyberMonitor from './components/cybermonitor.vue'
+import SomeComponent from './components/somecomponent.vue'
 
 const isLoading = ref(false)
 const monitorData = ref(null)
@@ -9,12 +9,12 @@ const monitorData = ref(null)
 onMounted(async () => {
   isLoading.value = true
   // Initial data fetch logic here
-  isLoading.value = false
+  //isLoading.value = false
 })
 </script>
 
 <template>
-  <div class="app-container">
+  <div  id="app" class="app-container">
     <header class="app-header">
       <h1>CyberKhabar</h1>
       <nav class="main-nav">
