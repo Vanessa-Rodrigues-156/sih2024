@@ -7,11 +7,11 @@ const app = createApp(App);
 
 app.mount("#app");
 
-// axios
-//   .get("http://localhost:3001/api/data")
-//   .then((response) => {
-//     console.log(response.data);
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });
+axios
+  .get("http://localhost:3001/api/data")
+  .then((response) => {
+    console.log(response.data);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
