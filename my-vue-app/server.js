@@ -1,89 +1,106 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
+const cors = require('cors');
+const fs = require('fs');
+
+// Environment Variables
+require('dotenv').config();
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/cybersecurity-reports';
+
+// Ensure uploads directory exists
+const uploadDir = './uploads/';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
 
 const app = express();
-const port = 5000;
 
-// Enable Cross-Origin Requests
+// Connect to MongoDB
+mongoose
+    .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.error('MongoDB connection error:', err));
+
+// Middleware
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Body parser middleware
-app.use(express.json());
+// File Upload Setup
+const storage = multer.diskStorage({
+    destination: uploadDir,
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    },
+});
+const upload = multer({ storage });
 
-// Connect to MongoDB (change the URI if you're using MongoDB Atlas)
-mongoose.connect("mongodb://localhost:27017/cybernews", { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
+// Mongoose Schema and Model
+const incidentSchema = new mongoose.Schema({
+    incidentType: { type: String, required: true },
+    organisation: { type: String, required: true },
+    location: { type: String },
+    details: { type: String, required: true },
+    source: { type: String, required: true },
+    evidence: { type: String },
+    impact: { type: String },
+    severity: { type: String },
+});
+const Incident = mongoose.model('Incident', incidentSchema);
 
-// Define the News schema
-const newsSchema = new mongoose.Schema({
-  title: String,
-  content: String,
-  type: String,
-  severity: String,
-  impact: String,
-  region: String,
-  views: { type: Number, default: 0 },
-  date: { type: Date, default: Date.now }
+// Routes
+app.get('/', (req, res) => {
+    res.send('Cybersecurity Incident Report API is running.');
 });
 
-// Create the News model
-const News = mongoose.model("News", newsSchema);
+app.post('/api/submit', upload.single('evidence'), async (req, res) => {
+    try {
+        const { incidentType, organisation, location, details, source, impact, severity } = req.body;
+        const evidence = req.file ? req.file.filename : null;
 
-// Get all news articles
-app.get("/api/news", async (req, res) => {
-  try {
-    const { type, severity, impact } = req.query;
-    const filters = {};
+        if (!incidentType || !organisation || !details || !source) {
+            return res.status(400).json({ message: 'Required fields are missing.' });
+        }
 
-    if (type) filters.type = type;
-    if (severity) filters.severity = severity;
-    if (impact) filters.impact = impact;
+        const incident = new Incident({
+            incidentType,
+            organisation,
+            location,
+            details,
+            source,
+            evidence,
+            impact,
+            severity,
+        });
 
-    const news = await News.find(filters);
-    res.json(news);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-// Get statistics for the dashboard
-app.get("/api/stat", async (req, res) => {
-  try {
-    // Fetch total articles published today
-    const totalArticles = await News.countDocuments({
-      date: { $gte: new Date().setHours(0, 0, 0, 0) },
-    });
-
-    // Fetch most trending topic (most frequent type)
-    const trendingTopic = await News.aggregate([
-      { $group: { _id: "$type", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 1 },
-    ]);
-
-    // Fetch top contributing region
-    const topRegion = await News.aggregate([
-      { $group: { _id: "$region", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 1 },
-    ]);
-
-    // Fetch the top viewed article
-    const topArticle = await News.findOne().sort({ views: -1 }).exec();
-
-    res.json({
-      totalArticles,
-      trendingTopic: trendingTopic[0]?._id || "N/A",
-      topRegion: topRegion[0]?._id || "N/A",
-      topArticle: topArticle ? topArticle.title : "N/A",
-    });
-  } catch (err) {
-    res.status(500).send(err);
-  }
+        await incident.save();
+        res.status(201).json({ message: 'Incident report submitted successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error submitting incident report.', error: error.message });
+    }
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.get('/api/reports', async (req, res) => {
+    const { page = 1, limit = 10 } = req.query;
+    try {
+        const reports = await Incident.find()
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
+        const total = await Incident.countDocuments();
+        res.status(200).json({ total, page, limit, reports });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching reports.', error: error.message });
+    }
+});
+
+// Start Server
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
