@@ -1,27 +1,11 @@
 <template>
   <div class="landing-page">
     <!-- Header Section -->
-    <header class="header">
-      <router-link to="/" class="logo">
-        <span>Cyber Incident Monitor</span>
-      </router-link>
-      <nav class="nav">
-        <router-link to="/dashboard" class="nav-item">Dashboard</router-link>
-        <router-link to="/incidents" class="nav-item">Incidents</router-link>
-        <router-link to="/alerts" class="nav-item">Alerts</router-link>
-        <router-link to="/integrations" class="nav-item">Integrations</router-link>
-        <router-link to="/settings" class="nav-item">Settings</router-link>
-      </nav>
-      <button class="user-avatar">
-        <img src="/placeholder.svg" width="32" height="32" alt="User Avatar" />
-      </button>
-    </header>
-
+    
     <!-- Main Section -->
     <main class="main-content">
       <h1 class="main-title blinking-text">Cyber Incident Monitor</h1>
       <p class="status">Real-time Monitoring</p>
-
       <!-- Grid Container for Sections (One row with 4 sections) -->
       <div class="grid-container">
         <!-- Geographic Distribution Section -->
@@ -35,7 +19,6 @@
             <li><strong>Hyderabad:</strong> 650 incidents</li>
           </ul>
         </section>
-
         <!-- Incident Types Section -->
         <section class="grid-item incident-types" @click="zoomSection">
           <h2>Incident Types</h2>
@@ -47,7 +30,6 @@
             <li><strong>Ransomware:</strong> 450</li>
           </ul>
         </section>
-
         <!-- Affected Sectors Section -->
         <section class="grid-item affected-sectors" @click="zoomSection">
           <h2>Affected Sectors</h2>
@@ -59,7 +41,6 @@
             <li><strong>Critical Infrastructure:</strong> 650</li>
           </ul>
         </section>
-
         <!-- Recent Incidents Section -->
         <section class="grid-item recent-incidents" @click="zoomSection">
           <h2>Recent Incidents</h2>
@@ -74,7 +55,6 @@
     </main>
   </div>
 </template>
-
 <script>
 export default {
   name: "LandingPage1",
@@ -87,7 +67,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 /* General Styles */
 .landing-page {
@@ -102,48 +81,13 @@ export default {
   transition: background-color 0.3s ease;
   position: relative;
 }
-
 /* Header Styles */
-.header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #101320;
-  border-bottom: 2px solid #0ff;
-}
-
-.logo {
-  font-size: 24px;
-  color: #0ff;
-  display: flex;
-  align-items: center;
-  transition: color 0.3s ease;
-}
-
-.nav {
-  display: flex;
-  gap: 15px;
-}
-
-.nav-item {
-  color: #cce7ff;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.nav-item:hover {
-  color: #fff;
-}
 
 /* Main Content */
 .main-content {
   width: 100%;
-  margin-top: 30px;
   text-align: center;
 }
-
 .main-title {
   font-size: 32px;
   font-weight: bold;
@@ -152,7 +96,6 @@ export default {
   animation: blink 1.5s infinite alternate;
   transition: color 0.3s ease;
 }
-
 @keyframes blink {
   0% {
     color: #0ff;
@@ -164,7 +107,6 @@ export default {
     color: #00ccff;
   }
 }
-
 .status {
   font-size: 14px;
   margin-top: 5px;
@@ -172,7 +114,6 @@ export default {
   color: #cce7ff;
   transition: color 0.3s ease;
 }
-
 /* Grid Layout for Four Sections in One Row */
 .grid-container {
   display: grid;
@@ -182,7 +123,6 @@ export default {
   margin-top: 30px;
   animation: fadeIn 2s ease-out;
 }
-
 .grid-item {
   background-color: #1a1a3d;
   padding: 20px;
@@ -197,7 +137,6 @@ export default {
   justify-content: space-between;
   animation: fadeInUp 1s ease-out;
 }
-
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -206,7 +145,6 @@ export default {
     opacity: 1;
   }
 }
-
 @keyframes fadeInUp {
   0% {
     opacity: 0;
@@ -217,20 +155,17 @@ export default {
     transform: translateY(0);
   }
 }
-
 /* Remove Hover Glow Effect */
 .grid-item:hover {
   transform: none; /* No zooming effect */
   box-shadow: none; /* No glowing effect */
   background-color: #2a2a6c; /* Subtle background color change */
 }
-
 /* Zoom Effect */
 .zoom {
   transform: scale(1.1);
   box-shadow: 0 0 25px #00ccff;
 }
-
 /* Section Titles */
 .grid-item h2 {
   color: #0ff;
@@ -240,34 +175,28 @@ export default {
   font-weight: bold;
   transition: color 0.3s ease;
 }
-
 .grid-item:hover h2 {
   color: #00ccff;
 }
-
 /* List Style */
 .grid-item ul {
   list-style: none;
   padding-left: 0;
   color: #cce7ff;
 }
-
 .grid-item li {
   font-size: 16px;
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
 }
-
 .grid-item a {
   color: white;
   text-decoration: none;
 }
-
 .grid-item a:hover {
   text-decoration: underline;
 }
-
 /* User Avatar */
 .user-avatar img {
   border-radius: 50%;
@@ -276,18 +205,15 @@ export default {
   height: 32px;
   transition: transform 0.3s ease;
 }
-
 .user-avatar img:hover {
   transform: scale(1.1);
 }
-
 /* Responsive Design */
 @media (max-width: 1200px) {
   .grid-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-
 @media (max-width: 768px) {
   .grid-container {
     grid-template-columns: 1fr;

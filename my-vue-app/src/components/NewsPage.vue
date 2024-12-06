@@ -51,6 +51,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -70,46 +72,8 @@ export default {
         severity: "",
         impact: "",
       },
-      newsArticles: [
-        {
-          id: 1,
-          title: "Massive Phishing Attack Targets Users Worldwide",
-          content: "A phishing scam targeting users of a major social media platform has compromised over 1 million accounts...",
-          type: "Phishing",
-          severity: "High",
-          impact: "Reputation Damage",
-        },
-        {
-          id: 2,
-          title: "Malware Strikes Top Financial Institutions",
-          content: "Malware found in the network of top financial institutions is causing disruptions in digital banking services...",
-          type: "Malware",
-          severity: "Critical",
-          impact: "Data Loss",
-        },
-        {
-          id: 3,
-          title: "Massive DDoS Attack Cripples Major Websites",
-          content: "A DDoS attack has taken down several major e-commerce websites, causing millions of dollars in lost revenue...",
-          type: "DDoS Attack",
-          severity: "High",
-          impact: "Service Disruption",
-        },
-        {
-          id: 4,
-          title: "Data Breach Exposes Personal Information of 500k Users",
-          content: "A data breach in a popular e-commerce platform has exposed the personal data of over 500,000 users...",
-          type: "Data Breach",
-          severity: "Critical",
-          impact: "Data Loss",
-        },
-      ],
-      stats: {
-        trendingTopic: "Data Breach",
-        topRegion: "North India",
-        totalArticles: 247,
-        topArticle: "Massive Phishing Attack Targets Users Worldwide",
-      },
+      newsArticles: [],
+      stats: {},
     };
   },
   computed: {
@@ -125,12 +89,33 @@ export default {
     },
   },
   methods: {
+    async fetchNews() {
+      try {
+        const response = await axios.get('http://localhost:5000/api/news');
+        this.newsArticles = response.data;
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    },
+    async fetchStats() {
+      try {
+        const response = await axios.get('http://localhost:5000/api/stat');
+        this.stats = response.data;
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    },
     applyFilters() {
       console.log("Filters applied:", this.filters);
     },
   },
+  mounted() {
+    this.fetchNews();
+    this.fetchStats();
+  },
 };
 </script>
+
 
 <style scoped>
 /* General Styles */

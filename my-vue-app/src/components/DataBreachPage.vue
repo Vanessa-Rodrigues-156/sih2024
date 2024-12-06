@@ -32,163 +32,57 @@
         <a href="#" class="mobile-link">Contact</a>
       </div>
     </header>
-  <main class="content">
-  <!-- Summary Section -->
-  <section class="summary">
-    <div class="summary-header">
-      <h1>Massive Data Breach Exposes Over 20 Million User Accounts</h1>
-      <a href="report.pdf" download="DataBreach_Report" class="download-btn">Download Report</a>
-    </div>
-    <h3 class="date">Date: August 27, 2024</h3>
-    <p>
-      A major social media platform has suffered a devastating breach,
-      exposing personal data like usernames, email addresses, and encrypted
-      passwords. This incident underscores the urgent need for strong
-      cybersecurity measures and user awareness.
-    </p>
-    <p>
-      Initial investigations reveal that attackers gained unauthorized
-      access through a combination of sophisticated phishing campaigns and
-      unpatched software vulnerabilities. The breach remained undetected
-      for over 10 days, allowing the attackers to exfiltrate sensitive data
-      with little resistance.
-    </p>
-    <p>
-      The company has since taken immediate steps to contain the breach,
-      including disabling compromised accounts, enhancing security protocols,
-      and collaborating with law enforcement and cybersecurity experts to
-      mitigate the damage.
-    </p>
-    <p>
-      This breach not only impacts the platform's users but also raises
-      serious concerns about the industry's preparedness against advanced
-      persistent threats. It serves as a wake-up call for organizations
-      worldwide to prioritize cybersecurity and adopt proactive measures.
-    </p>
-  </section>
+
+    <main class="content">
+      <!-- Summary Section -->
+      <section class="summary">
+        <div class="summary-header">
+          <h1>{{ report.title }}</h1>
+          <a :href="report.downloadLink" download="DataBreach_Report" class="download-btn">Download Report</a>
+        </div>
+        <h3 class="date">{{ report.date }}</h3>
+        <p>{{ report.summary }}</p>
+      </section>
+
       <!-- Key Details Section -->
-      <section class="key-details">
+      <section v-if="report.details" class="key-details">
         <h2>Key Details</h2>
         <ul>
-          <li>
-            <span class="icon">🔒</span>
-            <strong>Platform Affected:</strong> Popular Social Media Platform
-          </li>
-          <li>
-            <span class="icon">👥</span>
-            <strong>Number of Users Affected:</strong> Over 20 million
-          </li>
-          <li>
-            <span class="icon">📂</span>
-            <strong>Types of Data Compromised:</strong>
-            <ul class="nested-list">
-              <li>🔑 Usernames</li>
-              <li>📧 Email addresses</li>
-              <li>🔐 Encrypted passwords</li>
-              <li>💳 Credit card details (limited cases)</li>
-            </ul>
-          </li>
-          <li>
-            <span class="icon">⏱️</span>
-            <strong>Breach Duration:</strong> 10 days (undetected)
-          </li>
-          <li>
-            <span class="icon">🌐</span>
-            <strong>Geographic Impact:</strong> Global, with the majority of
-            affected users in the USA, UK, and India
-          </li>
-          <li>
-            <span class="icon">📋</span>
-            <strong>Current Status:</strong> Investigation ongoing; user
-            notifications are being sent
+          <li v-for="(value, key) in report.details" :key="key">
+            <strong>{{ formatKey(key) }}:</strong> 
+            <template v-if="Array.isArray(value)">
+              <ul>
+                <li v-for="(item, index) in value" :key="index">{{ item }}</li>
+              </ul>
+            </template>
+            <template v-else>{{ value }}</template>
           </li>
         </ul>
       </section>
+
       <!-- Insights Section -->
-      <section class="insights">
+      <section v-if="report.insights.length" class="insights">
         <h2>Insights</h2>
         <ul>
-          <li>
-            <span class="icon">⚠️</span>
-            Cybersecurity experts indicate that the breach was likely the result
-            of a sophisticated phishing campaign targeting employees of the
-            platform.
-          </li>
-          <li>
-            <span class="icon">🔧</span>
-            Attackers exploited vulnerabilities in the backend infrastructure.
-          </li>
-          <li>
-            <span class="icon">🔑</span>
-            Multi-factor authentication (MFA) adoption among users could have
-            mitigated some of the risks from this breach.
-          </li>
-          <li>
-            <span class="icon">📊</span>
-            Analysis suggests a 35% increase in credential reuse attacks after
-            the breach was disclosed.
-          </li>
-          <li>
-            <span class="icon">📈</span>
-            Users should:
-            <ul class="nested-list">
-              <li>Use strong, unique passwords</li>
-              <li>Enable two-factor authentication</li>
-              <li>Monitor accounts for suspicious activity</li>
-              <li>Regularly update privacy settings on social platforms</li>
-            </ul>
+          <li v-for="(insight, index) in report.insights" :key="index">
+            <p>{{ insight.title }}</p>
+            <p v-if="insight.description">{{ insight.description }}</p>
+            <p v-if="insight.impact"><strong>Impact:</strong> {{ insight.impact }}</p>
           </li>
         </ul>
       </section>
-      <!-- Images Section -->
-      <section class="images">
-        <h2>Visual Insights</h2>
-        <div class="image-row">
-          <img
-            src="https://via.placeholder.com/400x200?text=Cyber+Security"
-            alt="Cyber Security Visual 1"
-          />
-          <img
-            src="https://via.placeholder.com/400x200?text=Data+Breach"
-            alt="Cyber Security Visual 2"
-          />
-        </div>
-      </section>
+
       <!-- Sources Section -->
-      <section class="sources">
-        <h2>🔗Sources</h2>
+      <section v-if="report.sources.length" class="sources">
+        <h2>🔗 Sources</h2>
         <ul>
-          <li>
-            <span class="icon"></span>
-            <a href="https://www.socialmedia-platform.com/news/data-breach">
-              Official Company Statement
-            </a>
-          </li>
-          <li>
-            <span class="icon"></span>
-            <a
-              href="https://www.cybersecuritynews.com/data-breach-analysis"
-            >
-              Cybersecurity Expert Analysis
-            </a>
-          </li>
-          <li>
-            <span class="icon"></span>
-            <a href="https://www.cybersecurity.gov/advisories/data-breach">
-              Government Advisory
-            </a>
-          </li>
-          <li>
-            <span class="icon"></span>
-            <a
-              href="https://www.usersafety.org/testimonials/data-breach"
-            >
-              User Testimonials
-            </a>
+          <li v-for="(source, index) in report.sources" :key="index">
+            <a :href="source.url" target="_blank">{{ source.title }}</a>
           </li>
         </ul>
       </section>
     </main>
+
     <!-- Footer -->
     <footer class="footer">
       <div class="footer-container">
@@ -222,21 +116,62 @@
     </footer>
   </div>
 </template>
+
 <script>
+import axios from 'axios';
+
 export default {
   name: "DataBreachPage",
   data() {
     return {
       isMobileMenuOpen: false,
+      report: {
+        title: '',
+        date: '',
+        summary: '',
+        downloadLink: '',
+        details: {},
+        insights: [],
+        sources: []
+      }
     };
   },
   methods: {
     toggleMenu() {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
     },
+    fetchData() {
+      axios
+        .get("http://localhost:3000/api/reports")
+        .then((response) => {
+          const data = response.data || {};
+          this.report = {
+            title: data.title || 'No Title Available',
+            date: data.date || 'Unknown Date',
+            summary: data.summary || 'Summary not available.',
+            downloadLink: data.reportLink || '',
+            details: data.details || {},
+            insights: data.insights || [],
+            sources: data.sources || []
+          };
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          this.report.summary = "Failed to load report details.";
+        });
+    },
+    formatKey(key) {
+      return key
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (str) => str.toUpperCase());
+    }
   },
+  created() {
+    this.fetchData();
+  }
 };
 </script>
+
 <style scoped>
 /* General Styles */
 .container {
@@ -351,80 +286,88 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
-   margin-left: 200px;
 }
-.summary-header h1 {
-  margin: 0;
-  font-size: 24px;
-  color: #0ff;
+h1, h2 {
+  color: #00ffcc;
+}
+h3 {
+  color: #00ffcc;
+  font-size: 16px;
+  margin-top: 10px;
+}
+ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+li {
+  margin-bottom: 10px;
+}
+.nested-list {
+  padding-left: 20px;
 }
 .download-btn {
-  text-decoration: none;
-  background-color: #0ff;
-  color: #101320;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 10px 15px;
+  background-color: #00ccaa;
+  color: #fff;
+  padding: 10px 20px;
   border-radius: 5px;
-  transition: 0.3s;
-  box-shadow: 0 0 10px #0ff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 .download-btn:hover {
-  background-color: #00bcd4;
-  box-shadow: 0 0 15px #00bcd4;
-  color: #d9faff;
-}
-.summary h1,
-.summary h3 {
-  text-align: center;
-  color: #d9faff;
-}
-.key-details ul,
-.insights ul,
-.sources ul {
-  list-style: none;
-  padding: 0;
-}
-.key-details li,
-.insights li,
-.sources li {
-  margin-bottom: 10px;
-  display: flex;
-  align-items: flex-start;
-  color: #d9faff;
-}
-.key-details li .icon,
-.insights li .icon,
-.sources li .icon {
-  margin-right: 8px;
-  font-size: 16px;
-  color: #0ff;
-}
-.nested-list li {
-  margin-left: 20px;
+  background-color: #00ff66;
 }
 /* Footer */
 .footer {
-  background-color: rgba(0, 0, 0, 0.9);
-  padding: 30px;
+  margin-top: 20px;
+  background-color: #101320;
   color: #d9faff;
+  padding: 20px;
   border-top: 1px solid #0ff;
-  box-shadow: 0 -5px 15px #0ff;
 }
 .footer-container {
   display: flex;
   justify-content: space-between;
+  gap: 40px;
+}
+.footer-column h3 {
+  color: #00ffcc;
 }
 .footer-column ul {
-  list-style: none;
-  padding: 0;
+  list-style-type: none;
+  padding-left: 0;
 }
-.footer-column ul li a {
+.footer-column li {
+  margin-bottom: 10px;
+}
+.footer-column a {
   color: #d9faff;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
-.footer-column ul li a:hover {
-  color: #00ccaa;
+.footer-column a:hover {
+  color: #00ffcc;
+}
+.footer-bottom {
+  text-align: center;
+  margin-top: 20px;
+}
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+  }
+  .menu-icon {
+    display: block;
+  }
+  .nav-items {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .nav-links {
+    display: none;
+  }
+  .mobile-menu {
+    display: block;
+  }
 }
 </style>
