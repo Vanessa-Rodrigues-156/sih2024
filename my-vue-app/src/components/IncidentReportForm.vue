@@ -124,7 +124,7 @@ export default {
     payload.append("evidence", this.formData.evidence);
   }
 
-  fetch("http://localhost:3000/api/submit", {
+  fetch("http://localhost:5000/api/incidents", {
     method: "POST",
     body: payload, // Use FormData directly
   })
@@ -135,6 +135,7 @@ export default {
     .then((data) => {
       console.log("Submission successful:", data);
       alert("Your report has been submitted.");
+      this.resetForm();
     })
     .catch((error) => {
       console.error("Error submitting form:", error);
