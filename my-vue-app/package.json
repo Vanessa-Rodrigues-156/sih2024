@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.25.9",
+    "@babel/eslint-parser": "^7.25.9",
     "@nivo/geo": "^0.88.0",
     "@nivo/line": "^0.88.0",
     "@nivo/pie": "^0.88.0",

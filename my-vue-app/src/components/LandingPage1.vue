@@ -4,7 +4,7 @@
     
     <!-- Main Section -->
     <main class="main-content">
-      <h1 class="main-title blinking-text">Cyber Incident Monitor</h1>
+      <h1 class="main-title blinking-text">Bharat Cyber Insights</h1>
       <p class="status">Real-time Monitoring</p>
       <!-- Grid Container for Sections (One row with 4 sections) -->
       <div class="grid-container">
@@ -82,6 +82,7 @@ export default {
   position: relative;
 }
 /* Header Styles */
+
 
 /* Main Content */
 .main-content {
