@@ -3,68 +3,87 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
+const port = 5000;
 
-// Middleware
+// Enable Cross-Origin Requests
 app.use(cors());
+
+// Body parser middleware
 app.use(express.json());
 
-// MongoDB Connection
-mongoose
-  .connect("mongodb://localhost:27017/cyber_khabar", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+// Connect to MongoDB (change the URI if you're using MongoDB Atlas)
+mongoose.connect("mongodb://localhost:27017/cybernews", { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log(err));
 
-// Schema and Model
-const reportSchema = new mongoose.Schema({
+// Define the News schema
+const newsSchema = new mongoose.Schema({
   title: String,
-  date: String,
-  summary: String,
-  reportLink: String,
-  details: Object, // Accepts any key-value structure
-  insights: [
-    {
-      key: String,
-      value: String,
-    },
-  ],
-  sources: [
-    {
-      title: String,
-      url: String,
-    },
-  ],
+  content: String,
+  type: String,
+  severity: String,
+  impact: String,
+  region: String,
+  views: { type: Number, default: 0 },
+  date: { type: Date, default: Date.now }
 });
 
-const Report = mongoose.model("Report", reportSchema);
+// Create the News model
+const News = mongoose.model("News", newsSchema);
 
-// Routes
-app.get("/api/reports", async (req, res) => {
+// Get all news articles
+app.get("/api/news", async (req, res) => {
   try {
-    const report = await Report.findOne(); // Get the first report
-    if (!report) {
-      return res.status(404).json({ message: "No report found." });
-    }
-    res.json(report);
+    const { type, severity, impact } = req.query;
+    const filters = {};
+
+    if (type) filters.type = type;
+    if (severity) filters.severity = severity;
+    if (impact) filters.impact = impact;
+
+    const news = await News.find(filters);
+    res.json(news);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).send(err);
+  }
+});
+// Get statistics for the dashboard
+app.get("/api/stat", async (req, res) => {
+  try {
+    // Fetch total articles published today
+    const totalArticles = await News.countDocuments({
+      date: { $gte: new Date().setHours(0, 0, 0, 0) },
+    });
+
+    // Fetch most trending topic (most frequent type)
+    const trendingTopic = await News.aggregate([
+      { $group: { _id: "$type", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 1 },
+    ]);
+
+    // Fetch top contributing region
+    const topRegion = await News.aggregate([
+      { $group: { _id: "$region", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 1 },
+    ]);
+
+    // Fetch the top viewed article
+    const topArticle = await News.findOne().sort({ views: -1 }).exec();
+
+    res.json({
+      totalArticles,
+      trendingTopic: trendingTopic[0]?._id || "N/A",
+      topRegion: topRegion[0]?._id || "N/A",
+      topArticle: topArticle ? topArticle.title : "N/A",
+    });
+  } catch (err) {
+    res.status(500).send(err);
   }
 });
 
-app.post("/api/reports", async (req, res) => {
-  try {
-    const newReport = new Report(req.body);
-    await newReport.save();
-    res.status(201).json(newReport);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Server Listening
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
