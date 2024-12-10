@@ -142,7 +142,7 @@ export default {
     },
     fetchData() {
       axios
-        .get("http://localhost:5000/api/reports")
+        .get("http://localhost:3000/api/reports")
         .then((response) => {
           const data = response.data || {};
           this.report = {

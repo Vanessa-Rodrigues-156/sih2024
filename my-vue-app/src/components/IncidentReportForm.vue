@@ -5,20 +5,19 @@
     <form @submit.prevent="submitForm" autocomplete="off">
       <!-- Incident Type (Required) -->
       <label for="incident-type">Type of Incident</label>
-      <select id="incident-type" v-model="formData.incidentType" required autocomplete="off">
+      <select id="incident-type" v-model="formData.incidentType" required>
         <option disabled value="">Select Incident Type</option>
         <option v-for="type in incidentTypes" :key="type" :value="type">{{ type }}</option>
       </select>
 
       <!-- Organisation (Required) -->
-      <label for="organisation">Organisation </label>
+      <label for="organisation">Organisation</label>
       <input
         type="text"
         id="organisation"
         v-model="formData.organisation"
-        placeholder="Enter organisation (e.g., Google, Microsoft...) "
+        placeholder="Enter organisation (e.g., Google, Microsoft...)"
         required
-        autocomplete="off"
       />
 
       <!-- Location (Optional) -->
@@ -27,8 +26,7 @@
         type="text"
         id="location"
         v-model="formData.location"
-        placeholder="Enter location (e.g., city or region) (Optional)"
-        autocomplete="off"
+        placeholder="Enter location (e.g., city or region)"
       />
 
       <!-- Incident Details (Required) -->
@@ -38,7 +36,6 @@
         v-model="formData.details"
         placeholder="Provide details of the incident..."
         required
-        autocomplete="off"
       ></textarea>
 
       <!-- Source of Information -->
@@ -47,25 +44,24 @@
         type="text"
         id="source"
         v-model="formData.source"
-        placeholder="Enter the source (e.g., internal report,twitter,reddit,...)"
+        placeholder="Enter the source (e.g., internal report, Twitter, Reddit...)"
         required
-        autocomplete="off"
       />
 
       <!-- Evidence Upload (Optional) -->
       <label for="evidence">Upload Evidence (Optional)</label>
-      <input type="file" id="evidence" @change="handleFileUpload" autocomplete="off" />
+      <input type="file" id="evidence" @change="handleFileUpload" />
 
       <!-- Impact (Optional) -->
       <label for="impact">Impact of Incident (Optional)</label>
-      <select id="impact" v-model="formData.impact" autocomplete="off">
+      <select id="impact" v-model="formData.impact">
         <option disabled value="">Select Impact</option>
         <option v-for="impact in impacts" :key="impact" :value="impact">{{ impact }}</option>
       </select>
 
       <!-- Severity (Optional) -->
       <label for="severity">Severity Level (Optional)</label>
-      <select id="severity" v-model="formData.severity" autocomplete="off">
+      <select id="severity" v-model="formData.severity">
         <option disabled value="">Select Severity</option>
         <option v-for="severity in severities" :key="severity" :value="severity">{{ severity }}</option>
       </select>
@@ -100,7 +96,7 @@ export default {
         organisation: "",
         location: "",
         details: "",
-        source: "", // New field added here
+        source: "",
         evidence: null,
         impact: "",
         severity: "",
@@ -111,48 +107,66 @@ export default {
     handleFileUpload(event) {
       this.formData.evidence = event.target.files[0];
     },
-  submitForm() {
-  const payload = new FormData();
-  payload.append("incidentType", this.formData.incidentType);
-  payload.append("organisation", this.formData.organisation);
-  payload.append("location", this.formData.location);
-  payload.append("details", this.formData.details);
-  payload.append("source", this.formData.source);
-  payload.append("impact", this.formData.impact);
-  payload.append("severity", this.formData.severity);
-  if (this.formData.evidence) {
-    payload.append("evidence", this.formData.evidence);
-  }
+    submitForm() {
+      // Form Validation
+      if (
+        !this.formData.incidentType ||
+        !this.formData.organisation ||
+        !this.formData.details ||
+        !this.formData.source
+      ) {
+        alert("Please fill in all required fields.");
+        return;
+      }
 
-  fetch("http://localhost:5000/api/incidents", {
-    method: "POST",
-    body: payload, // Use FormData directly
-  })
-    .then((response) => {
-      if (!response.ok) throw new Error("Server error");
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Submission successful:", data);
-      alert("Your report has been submitted.");
-      this.resetForm();
-    })
-    .catch((error) => {
-      console.error("Error submitting form:", error);
-      alert("Failed to submit the report. Please try again.");
-    });
-},
-resetForm() {
+      // Create FormData payload
+      const payload = new FormData();
+      payload.append("incidentType", this.formData.incidentType);
+      payload.append("organisation", this.formData.organisation);
+      payload.append("location", this.formData.location);
+      payload.append("details", this.formData.details);
+      payload.append("source", this.formData.source);
+      payload.append("impact", this.formData.impact);
+      payload.append("severity", this.formData.severity);
+      if (this.formData.evidence) {
+        payload.append("evidence", this.formData.evidence);
+      }
+
+      // Submit form data via API
+      fetch("http://localhost:5000/api/incidents", {
+        method: "POST",
+        body: payload,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((err) => {
+              throw new Error(err.message || "Server error");
+            });
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Submission successful:", data);
+          alert("Your report has been submitted.");
+          this.resetForm();
+        })
+        .catch((error) => {
+          console.error("Error submitting form:", error);
+          alert(`Failed to submit the report: ${error.message}`);
+        });
+    },
+    resetForm() {
       this.formData = {
         incidentType: "",
         organisation: "",
         location: "",
         details: "",
-        source: "", // Reset the new field
+        source: "",
         evidence: null,
         impact: "",
         severity: "",
       };
+      document.getElementById("evidence").value = ""; // Reset file input
     },
   },
 };
