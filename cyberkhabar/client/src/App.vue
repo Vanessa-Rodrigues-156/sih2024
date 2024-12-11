@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="min-h-screen w-full bg-slate-900 flex">
+    <div class="min-h-screen w-auto bg-slate-900 flex">
       <!-- Sidebar -->
       <aside class="bg-slate-800 flex flex-col justify-between items-center py-4 w-16">
         <div class="flex flex-col gap-4">
@@ -21,6 +21,15 @@
           >
             <font-awesome-icon :icon="['fas', 'chart-line']" class="text-slate-200 text-lg" />
           </button>
+
+          <!-- Government Reporting Button -->
+          <button
+            @click="currentView = 'Govtreporting'"
+            :class="currentView === 'Govtreporting' ? 'bg-blue-500' : 'hover:bg-slate-700'"
+            class="w-12 h-12 flex items-center justify-center rounded-md transition-all"
+          >
+            <font-awesome-icon :icon="['fas', 'building-government']" class="text-slate-200 text-lg" />
+          </button>
         </div>
       </aside>
 
@@ -35,21 +44,23 @@
 
 <script>
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faHome, faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faChartLine, faBuildingGovernment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 // Import your components
 import HomePage from "./views/HomePage.vue";
 import Dashboard from "./views/Dashboard.vue";
+import Govtreporting from "./views/Govtreporting.vue";
 
 // Add icons to the library
-library.add(faHome, faChartLine);
+library.add(faHome, faChartLine, faBuildingGovernment);
 
 export default {
-  name: "CyberKhabar",
+  name: "App",
   components: {
     HomePage,
     Dashboard,
+    Govtreporting,
     FontAwesomeIcon
   },
   data() {
@@ -59,7 +70,14 @@ export default {
   },
   computed: {
     currentViewComponent() {
-      return this.currentView === "Dashboard" ? Dashboard : HomePage;
+      switch(this.currentView) {
+        case "Dashboard":
+          return Dashboard;
+        case "Govtreporting":
+          return Govtreporting;
+        default:
+          return HomePage;
+      }
     },
   },
 };
@@ -74,6 +92,6 @@ button {
   cursor: pointer;
 }
 button:hover {
-  background-color: rgba(96, 125, 139, 0.2); /* Slight hover effect */
+  background-color: rgba(96, 125, 139, 0.2);
 }
 </style>

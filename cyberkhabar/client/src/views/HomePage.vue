@@ -1,200 +1,222 @@
 <template>
-    <div id="app">
-      <div class="min-h-screen w-full bg-slate-900">
-        <!-- Header -->
-        <div class="flex justify-between items-center px-6 py-4 bg-slate-800">
-          <div class="title">
-            <h1 class="text-3xl font-bold text-blue-400">CyberKhabar</h1>
+  <div id="app">
+    <div class="min-h-screen w-full bg-slate-900">
+      <!-- Header -->
+      <div class="flex justify-between items-center px-6 py-4 bg-slate-800">
+        <div class="title">
+          <h1 class="text-3xl font-bold text-blue-400">CyberKhabar</h1>
+        </div>
+        <div class="flex gap-4">
+          <button class="px-4 py-2 text-blue-400 border border-blue-400 rounded-md hover:bg-blue-400/10 transition-all">
+            Reload
+          </button>
+          
+        </div>
+      </div>
+
+      <!-- Search Bar (Below Header) -->
+      <div class="w-full bg-slate-800 py-4 px-6">
+        <input type="text" class="w-full px-6 py-3 bg-slate-700 rounded-md text-slate-200" placeholder="Search News..." />
+      </div>
+
+      <!-- Main Content (Flex Container) -->
+      <div class="flex px-6 py-6 gap-6">
+        <!-- Left Filters (Dropdowns) -->
+        <aside class="bg-slate-800 rounded-lg p-6 w-1/4 max-w-xs flex-shrink-0">
+          <h3 class="text-xl font-semibold text-blue-400 mb-4">
+            <i class="fas fa-filter"></i> Filters
+          </h3>
+          <div class="space-y-6">
+            <!-- Filter Section 1: Date Range -->
+            <div>
+              <h4 class="text-lg font-semibold text-slate-200 mb-2">Date Range</h4>
+              <select class="w-full px-3 py-2 bg-slate-700 rounded-md border-none text-slate-200">
+                <option>Last 24 hours</option>
+                <option>Last Week</option>
+                <option>Last Month</option>
+              </select>
+            </div>
+
+            <!-- Filter Section 2: Severity -->
+            <div>
+              <h4 class="text-lg font-semibold text-slate-200 mb-2">Severity</h4>
+              <select class="w-full px-3 py-2 bg-slate-700 rounded-md border-none text-slate-200">
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+                <option>Critical</option>
+              </select>
+            </div>
+
+            <!-- Filter Section 3: Location -->
+            <div>
+              <h4 class="text-lg font-semibold text-slate-200 mb-2">Location</h4>
+              <select class="w-full px-3 py-2 bg-slate-700 rounded-md border-none text-slate-200">
+                <option>North America</option>
+                <option>Europe</option>
+                <option>Asia</option>
+              </select>
+            </div>
+
+            <!-- Filter Section 4: Attack Type -->
+            <div>
+              <h4 class="text-lg font-semibold text-slate-200 mb-2">Attack Type</h4>
+              <select class="w-full px-3 py-2 bg-slate-700 rounded-md border-none text-slate-200">
+                <option>Ransomware</option>
+                <option>Phishing</option>
+                <option>DDoS</option>
+                <option>Malware</option>
+              </select>
+            </div>
           </div>
-          <div class="flex gap-4">
-            <button class="px-4 py-2 text-blue-400 border border-blue-400 rounded-md hover:bg-blue-400/10 transition-all">
-              Reload
-            </button>
-            
+        </aside>
+
+        <!-- Main Content (Cyber Threat Updates) -->
+        <main class="flex-1 space-y-6 max-w-2xl">
+          <!-- Marquee for Flashing News (Inside Specific Box) -->
+          <div class="bg-slate-700 p-3 mb-6 rounded-lg overflow-hidden">
+            <div class="marquee-content text-slate-200 text-lg font-semibold">
+              Flashing News: Ransomware Attack on Healthcare → Phishing Campaign Targets Banks → DDoS Attack on Government Websites...
+            </div>
+          </div>
+
+          <!-- News Section (Cyber Threat Updates) -->
+          <section class="bg-slate-800 rounded-lg p-6">
+            <h2 class="text-2xl font-semibold text-blue-400 mb-4">
+              <i class="fas fa-newspaper"></i> Cyber Threat Updates
+            </h2>
+            <div>
+              <div v-for="news in filteredNews" :key="news.id" class="bg-slate-700 rounded-lg overflow-hidden hover:-translate-y-1 transition-transform mb-4">
+                <img :src="news.image" :alt="news.title" class="w-full h-36 object-cover" />
+                <div class="p-4">
+                  <h3 class="text-slate-100 font-medium mb-2">{{ news.title }}</h3>
+                  <p class="text-slate-400 mb-4">{{ news.description }}</p>
+                  <router-link :to="'/news/' + news.id" class="text-blue-400 hover:text-blue-300 transition-colors">
+                    Read More →
+                  </router-link>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- Right Statistics (Adjusted Content Size) -->
+        <div class="bg-slate-800 rounded-lg p-6 flex flex-col justify-start">
+          <h3 class="text-xl font-semibold text-blue-400 mb-4">
+            <i class="fas fa-chart-line"></i> Current Status
+          </h3>
+          <div class="space-y-4">
+            <div v-for="(value, key) in currentStats" :key="key" class="bg-slate-700 p-3 rounded-lg flex items-center gap-3 hover:bg-slate-600 transition-colors">
+              <i :class="getStatsIcon(key)" class="text-blue-400"></i>
+              <span class="text-slate-100">{{ key }}: {{ value }}</span>
+            </div>
+            <div class="mt-6 text-center">
+              <span class="text-4xl font-bold text-blue-400 block">
+                {{ currentStats.relatedIncidents }}
+              </span>
+              <span class="text-slate-400">Related Incidents</span>
+            </div>
           </div>
         </div>
-
-        <div class="form-group">
-          <label for="incidentDetails">Incident Details</label>
-          <textarea
-            id="incidentDetails"
-            v-model="form.incidentDetails"
-            placeholder="Provide details of the incident..."
-            required
-          ></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="source">Source of Information</label>
-          <input
-            id="source"
-            type="text"
-            v-model="form.source"
-            placeholder="Enter the source (e.g., internal report, Twitter...)"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="evidence">Upload Evidence (Optional)</label>
-          <input
-            id="evidence"
-            type="file"
-            @change="handleFileUpload"
-            accept=".jpg,.png,.pdf,.docx"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="impact">Impact of Incident (Optional)</label>
-          <select id="impact" v-model="form.impact">
-            <option value="" disabled>Select Impact</option>
-            <option v-for="impact in impactLevels" :key="impact" :value="impact">
-              {{ impact }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="severity">Severity Level (Optional)</label>
-          <select id="severity" v-model="form.severity">
-            <option value="" disabled>Select Severity</option>
-            <option v-for="level in severityLevels" :key="level" :value="level">
-              {{ level }}
-            </option>
-          </select>
-        </div>
-
-        <button type="submit" class="submit-btn">Submit Report</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'CyberKhabar',
   data() {
     return {
-      form: {
-        incidentType: '',
-        organization: '',
-        location: '',
-        incidentDetails: '',
-        source: '',
-        evidence: null,
-        impact: '',
-        severity: '',
+      attackTypes: ['Ransomware', 'Phishing', 'DDoS', 'Malware'],
+      impactLevels: ['High', 'Medium', 'Low'],
+      locations: ['North America', 'Europe', 'Asia'],
+      selectedFilters: {
+        type: [],
+        impact: [],
+        location: [],
+        recency: '7'
       },
-      incidentTypes: [
-        'Phishing Attack',
-        'Data Breach',
-        'Malware Infection',
-        'DDoS Attack',
-        'Other',
+      news: [
+        {
+          id: 1,
+          title: 'Ransomware Attack on Healthcare',
+          description: 'A major ransomware attack has affected healthcare facilities...',
+          image: 'path/to/image1.jpg'
+        },
+        {
+          id: 2,
+          title: 'Phishing Campaign Targets Banks',
+          description: 'A new phishing campaign is targeting major banks...',
+          image: 'path/to/image2.jpg'
+        },
+        {
+          id: 3,
+          title: 'DDoS Attack on Government Websites',
+          description: 'Government websites have been hit by a DDoS attack...',
+          image: 'path/to/image3.jpg'
+        }
       ],
-      impactLevels: ['Low', 'Medium', 'High', 'Critical'],
-      severityLevels: ['Informational', 'Low', 'Medium', 'High', 'Critical'],
+      currentStats: {
+        'Active Threats': 5,
+        'Resolved Incidents': 12,
+        'Pending Alerts': 3,
+        relatedIncidents: 20
+      }
     };
   },
-  methods: {
-    handleFileUpload(event) {
-      this.form.evidence = event.target.files[0];
-    },
-    submitForm() {
-      console.log('Form submitted:', this.form);
-      alert('Report submitted successfully!');
-      this.resetForm();
-    },
-    resetForm() {
-      this.form = {
-        incidentType: '',
-        organization: '',
-        location: '',
-        incidentDetails: '',
-        source: '',
-        evidence: null,
-        impact: '',
-        severity: '',
-      };
-    },
+  computed: {
+    filteredNews() {
+      return this.news.filter(newsItem => {
+        return (
+          (this.selectedFilters.type.length === 0 || this.selectedFilters.type.includes(newsItem.type)) &&
+          (this.selectedFilters.impact.length === 0 || this.selectedFilters.impact.includes(newsItem.impact)) &&
+          (this.selectedFilters.location.length === 0 || this.selectedFilters.location.includes(newsItem.location))
+        );
+      });
+    }
   },
+  methods: {
+    getStatsIcon(key) {
+      const icons = {
+        'Active Threats': 'fas fa-exclamation-triangle',
+        'Resolved Incidents': 'fas fa-check-circle',
+        'Pending Alerts': 'fas fa-clock'
+      };
+      return icons[key] || 'fas fa-info-circle';
+    }
+  }
 };
 </script>
 
 <style>
-body {
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+html, body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: #001f3f; /* Dark Blue Background */
-  color: #ffffff;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 #app {
+  max-width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   min-height: 100vh;
 }
 
-.form-container {
-  background: #002b5c;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 600px;
+.marquee-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 20s linear infinite;
 }
 
-h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-p {
-  font-size: 14px;
-  margin-bottom: 20px;
-  text-align: center;
-  line-height: 1.5;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-input,
-textarea,
-select {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  background: #f0f8ff;
-  color: #001f3f;
-}
-
-textarea {
-  resize: vertical;
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: none;
-  border-radius: 4px;
-  background: #0074d9;
-  color: white;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.submit-btn:hover {
-  background: #0056a6;
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 </style>
