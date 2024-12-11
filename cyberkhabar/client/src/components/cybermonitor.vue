@@ -90,121 +90,48 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import { incidentService } from '../api/incidents';
+import { dashboardService } from '../api/dashboard';
 
-// Chart data
-const chartData = ref({
-  labels: Array.from({ length: 12 }, (_, i) => `Hour ${i + 1}`),
-  datasets: [
-    {
-      label: "Type 1",
-      data: Array.from({ length: 12 }, () => Math.random() * 100),
-      borderColor: "#3b82f6",
-      fill: false,
-    },
-    {
-      label: "Type 2",
-      data: Array.from({ length: 12 }, () => Math.random() * 100),
-      borderColor: "#ef4444",
-      fill: false,
-    },
-  ],
-});
+const chartData = ref({});
+const incidents = ref([]);
+const alerts = ref([]);
+const stats = ref({});
 
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: true,
-    },
-  },
+const fetchData = async () => {
+  try {
+    const [dashboardStats, chartData, recentIncidents, alerts] = await Promise.all([
+      dashboardService.getDashboardStats(),
+      dashboardService.getChartData(),
+      incidentService.getRecentIncidents(),
+      dashboardService.getAlerts()
+    ]);
+
+    stats.value = dashboardStats;
+    chartData.value = chartData;
+    incidents.value = recentIncidents;
+    alerts.value = alerts;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 };
 
-// Function to update chart data with random values
-const updateChartData = () => {
-  chartData.value.datasets.forEach((dataset) => {
-    dataset.data = dataset.data.map(() => Math.random() * 100);
-  });
-};
-
-// Stats
-const incidentTypes = ref([
-  { type: "Malware", count: "1.5K" },
-  { type: "DDoS", count: "800" },
-  { type: "Ransomware", count: "450" },
-]);
-
-const sectors = ref([
-  { type: "Government", count: "1.5K" },
-  { type: "Healthcare", count: "1K" },
-  { type: "Critical Infrastructure", count: "650" },
-]);
-
-const locations = ref([
-  { type: "New Delhi", count: "1.2K" },
-  { type: "Mumbai", count: "1K" },
-  { type: "Bengaluru", count: "800" },
-]);
-
-const recentIncidents = ref([
-  {
-    title: "Ransomware Attack",
-    sector: "Government Sector",
-    time: "2h ago",
-    severity: "high",
-  },
-  {
-    title: "Phishing Campaign",
-    sector: "Finance Sector",
-    time: "4h ago",
-    severity: "medium",
-  },
-  {
-    title: "DDoS Attack Mitigated",
-    sector: "Critical Infrastructure",
-    time: "8h ago",
-    severity: "low",
-  },
-]);
-
-const alerts = ref([
-  {
-    name: "John Doe",
-    message: "Ransomware attack detected in the government sector.",
-    time: "2h ago",
-  },
-  {
-    name: "Sarah Miller",
-    message: "Phishing campaign targeting the finance sector.",
-    time: "4h ago",
-  },
-  {
-    name: "Michael Kumar",
-    message: "DDoS attack on critical infrastructure mitigated.",
-    time: "8h ago",
-  },
-]);
-
-const getSeverityColor = (severity) => {
-  const colors = {
-    high: "bg-red-500",
-    medium: "bg-yellow-500",
-    low: "bg-green-500",
-  };
-  return colors[severity] || "bg-blue-500";
-};
-
-// Start the interval when the component is mounted
 let interval;
-onMounted(() => {
-  interval = setInterval(updateChartData, 1000); // Update every second
+onMounted(async () => {
+  await fetchData();
+  interval = setInterval(fetchData, 5000);
 });
 
-// Clear the interval when the component is unmounted
 onBeforeUnmount(() => {
   clearInterval(interval);
 });
+
+const handleNewIncident = async (incidentData) => {
+  await incidentService.createIncident(incidentData);
+  await fetchData();
+};
 </script>
+
 
 <style scoped>
 /* Add any component-specific styles here */
