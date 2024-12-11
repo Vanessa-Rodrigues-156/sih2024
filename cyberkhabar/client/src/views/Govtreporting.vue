@@ -81,61 +81,100 @@
 
 <script>
 export default {
-    name: 'GovtReporting',
-    data() {
-        return {
-            form: {
-                incidentType: '',
-                organization: '',
-                location: '',
-                details: '',
-                source: '',
-                evidence: null,
-                impact: '',
-                severity: ''
-            }
-        }
+  data() {
+    return {
+      incidentTypes: [
+        "Phishing",
+        "Malware",
+        "DDoS Attack",
+        "Data Breach",
+        "Unauthorized Access",
+        "Other",
+      ],
+      impacts: [
+        "Financial Loss",
+        "Data Loss",
+        "Service Disruption",
+        "Reputation Damage",
+      ],
+      severities: ["Low", "Medium", "High", "Critical"],
+      formData: {
+        incidentType: "",
+        organisation: "",
+        location: "",
+        details: "",
+        source: "",
+        evidence: null,
+        impact: "",
+        severity: "",
+      },
+    };
+  },
+  methods: {
+    handleFileUpload(event) {
+      this.formData.evidence = event.target.files[0];
     },
-    methods: {
-        handleFileUpload(event) {
-            this.form.evidence = event.target.files[0]
-        },
-        async submitReport() {
-            try {
-                const formData = new FormData()
-                
-                Object.keys(this.form).forEach(key => {
-                    formData.append(key, this.form[key])
-                })
+    submitForm() {
+      // Form Validation
+      if (
+        !this.formData.incidentType ||
+        !this.formData.organisation ||
+        !this.formData.details ||
+        !this.formData.source
+      ) {
+        alert("Please fill in all required fields.");
+        return;
+      }
 
-                const response = await fetch('/api/reports', {
-                    method: 'POST',
-                    body: formData
-                })
+      // Create FormData payload
+      const payload = new FormData();
+      payload.append("incidentType", this.formData.incidentType);
+      payload.append("organisation", this.formData.organisation);
+      payload.append("location", this.formData.location);
+      payload.append("details", this.formData.details);
+      payload.append("source", this.formData.source);
+      payload.append("impact", this.formData.impact);
+      payload.append("severity", this.formData.severity);
+      if (this.formData.evidence) {
+        payload.append("evidence", this.formData.evidence);
+      }
 
-                if (response.ok) {
-                    this.resetForm()
-                    alert('Report submitted successfully!')
-                } else {
-                    throw new Error('Failed to submit report')
-                }
-            } catch (error) {
-                console.error('Error submitting report:', error)
-                alert('Failed to submit report. Please try again.')
-            }
-        },
-        resetForm() {
-            this.form = {
-                incidentType: '',
-                organization: '',
-                location: '',
-                details: '',
-                source: '',
-                evidence: null,
-                impact: '',
-                severity: ''
-            }
-        }
-    }
-}
+      // Submit form data via API
+      fetch("http://localhost:5000/api/incidents", {
+        method: "POST",
+        body: payload,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((err) => {
+              throw new Error(err.message || "Server error");
+            });
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Submission successful:", data);
+          alert("Your report has been submitted.");
+          this.resetForm();
+        })
+        .catch((error) => {
+          console.error("Error submitting form:", error);
+          alert(`Failed to submit the report: ${error.message}`);
+        });
+    },
+    resetForm() {
+      this.formData = {
+        incidentType: "",
+        organisation: "",
+        location: "",
+        details: "",
+        source: "",
+        evidence: null,
+        impact: "",
+        severity: "",
+      };
+      document.getElementById("evidence").value = ""; // Reset file input
+    },
+  },
+};
 </script>
