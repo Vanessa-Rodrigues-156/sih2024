@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <somecomponent />
+    <cybermonitor />
  
   </div>
 </template>
 
 <script>
 
-import somecomponent from "./components/somecomponent.vue";
+import cybermonitor from "./components/cybermonitor.vue";
 
 export default {
   name: "App",
   components: {
-    somecomponent,
+    cybermonitor,
 
   },
 };
