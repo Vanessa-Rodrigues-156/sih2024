@@ -5,28 +5,28 @@ const multer = require("multer");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const functions = require("firebase-functions");
 require("dotenv").config();
 
 const app = express();
+
 // Environment Variables
-const PORT = 5000;
-const MONGO_URI = "mongodb+srv://Vashni:Vashni001@cluster0.kdgbh.mongodb.net/cyber_backend?retryWrites=true&w=majority";
+const MONGO_URI = functions.config().mongodb.uri; // Firebase environment variable for MongoDB URI
 
-
-// Ensure uploads directory exists
-const uploadDir = "./uploads/";
+// Ensure uploads directory exists (in Firebase Cloud Functions, use the tmp directory)
+const uploadDir = "/tmp/uploads/";
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
 // MongoDB Connection
 mongoose
-.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("MongoDB connected successfully."))
-.catch((err) => console.error("MongoDB connection error:", err));
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected successfully."))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Middleware
 app.use(cors());
@@ -34,7 +34,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// File Upload Setup
+// File Upload Setup (Firebase Functions use temporary directories)
 const storage = multer.diskStorage({
   destination: uploadDir,
   filename: (req, file, cb) => {
@@ -44,6 +44,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Schemas and Models
+
 // News Schema
 const newsSchema = new mongoose.Schema({
   title: String,
@@ -115,6 +116,7 @@ app.get("/api/news", async (req, res) => {
   }
 });
 
+// Statistics Route
 app.get("/api/stat", async (req, res) => {
   try {
     const totalArticles = await News.countDocuments({
@@ -174,6 +176,7 @@ app.post("/api/incidents", upload.single("evidence"), async (req, res) => {
   }
 });
 
+// Get Reports Route
 app.get("/api/reports", async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   try {
@@ -187,7 +190,7 @@ app.get("/api/reports", async (req, res) => {
   }
 });
 
-// Cybersecurity Reports
+// Cybersecurity Reports Route
 app.post("/api/reports", async (req, res) => {
   try {
     const newReport = new Report(req.body);
@@ -198,6 +201,7 @@ app.post("/api/reports", async (req, res) => {
   }
 });
 
+// Get Cybersecurity Report Route
 app.get("/api/reports/cyber", async (req, res) => {
   try {
     const report = await Report.findOne();
@@ -210,7 +214,5 @@ app.get("/api/reports/cyber", async (req, res) => {
   }
 });
 
-// Start the Server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Export the Express app as a Firebase Cloud Function
+exports.api = functions.https.onRequest(app);

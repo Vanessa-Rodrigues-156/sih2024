@@ -8,8 +8,8 @@
     ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/api/**",  // All API requests go to the Cloud Function
+        "function": "api" 
       }
     ]
   }
