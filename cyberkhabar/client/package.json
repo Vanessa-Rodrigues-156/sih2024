@@ -11,6 +11,7 @@
     "dev": "vite",
     "start": "electron .",
     "build": "vite build",
+    "electron": "electron-builder",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -20,8 +21,6 @@
     "axios": "^1.7.8",
     "chart.js": "^4.4.7",
     "cors": "^2.8.5",
-    "electron": "^33.2.1",
-    "electron-builder": "^25.1.8",
     "electron-is-dev": "^3.0.1",
     "express": "^4.21.2",
     "mongoose": "^8.8.4",
@@ -35,8 +34,21 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/cli-service": "^5.0.8",
     "autoprefixer": "^10.4.20",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "vite": "^6.0.3"
+  },
+  "build": {
+    "appId": "com.cyberkhabar.app",
+    "productName": "CyberKhabar",
+    "files": [
+      "dist/**/*",
+      "main.js"
+    ],
+    "directories": {
+      "buildResources": "build"
+    }
   }
 }
