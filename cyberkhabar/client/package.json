@@ -6,13 +6,12 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "main":"main.cjs",
+  "main": "main.js",
   "scripts": {
     "dev": "vite",
-    "start":"electron .",
+    "start": "electron .",
     "build": "vite build",
     "preview": "vite preview"
-    
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.1",
@@ -23,6 +22,7 @@
     "cors": "^2.8.5",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
+    "electron-is-dev": "^3.0.1",
     "express": "^4.21.2",
     "mongoose": "^8.8.4",
     "multer": "^1.4.5-lts.1",
@@ -40,4 +40,3 @@
     "vite": "^6.0.3"
   }
 }
-
