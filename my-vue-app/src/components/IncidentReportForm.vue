@@ -133,7 +133,7 @@ export default {
       }
 
       // Submit form data via API
-      fetch("http://localhost:5000/api/incidents", {
+      fetch("https://cyber-khabar.web.app/api", {
         method: "POST",
         body: payload,
       })
