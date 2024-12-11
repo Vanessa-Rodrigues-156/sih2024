@@ -26,16 +26,19 @@
 
       <!-- Main Content -->
       <div class="flex-1">
+        <!-- Dynamically load the correct component based on currentView -->
         <component :is="currentViewComponent" />
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHome, faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
+// Import your components
 import HomePage from "./views/HomePage.vue";
 import Dashboard from "./views/Dashboard.vue";
 
@@ -47,7 +50,7 @@ export default {
   components: {
     HomePage,
     Dashboard,
-    FontAwesomeIcon,
+    FontAwesomeIcon
   },
   data() {
     return {
@@ -61,8 +64,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style>
 /* Sidebar Button Animation */
