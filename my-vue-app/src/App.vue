@@ -2,7 +2,7 @@
   <div id="app" class="bright-theme">
     <!-- Navigation Bar -->
     <header>
-      <h1>Cybers Khabar</h1>
+      <h1>CyberKhabar</h1>
       <nav class="navbar">
        <button @click="currentSection = 'newsPage'">News Portal</button>
           <button @click="currentSection = 'incidentForm'">Report Incident</button>
@@ -34,7 +34,7 @@
 
     <!-- Footer -->
     <footer>
-      <p>&copy; 2024 Cybersecurity Hub. Empowering a secure digital India.</p>
+      <p>&copy; 2024 CybersKhabar. Empowering a secure digital India.</p>
     </footer>
   </div>
 </template>
