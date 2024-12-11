@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="h-64">
-        <line-chart :chart-data="chartData" :options="chartOptions"></line-chart>
+        <line-chart :chart-data="chartData" :options="chartOptions" />
       </div>
     </div>
 
@@ -89,9 +89,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { defineAsyncComponent } from "vue";
-
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
 // Chart data
 const chartData = ref({
@@ -111,6 +109,7 @@ const chartData = ref({
     },
   ],
 });
+
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
@@ -119,6 +118,13 @@ const chartOptions = {
       display: true,
     },
   },
+};
+
+// Function to update chart data with random values
+const updateChartData = () => {
+  chartData.value.datasets.forEach((dataset) => {
+    dataset.data = dataset.data.map(() => Math.random() * 100);
+  });
 };
 
 // Stats
@@ -187,6 +193,17 @@ const getSeverityColor = (severity) => {
   };
   return colors[severity] || "bg-blue-500";
 };
+
+// Start the interval when the component is mounted
+let interval;
+onMounted(() => {
+  interval = setInterval(updateChartData, 1000); // Update every second
+});
+
+// Clear the interval when the component is unmounted
+onBeforeUnmount(() => {
+  clearInterval(interval);
+});
 </script>
 
 <style scoped>

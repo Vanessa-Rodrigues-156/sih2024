@@ -1,41 +1,17 @@
 <template>
-  <div id="app">
-    <div class="form-container">
-      <h1>Report Cybersecurity Incident (Anonymous)</h1>
-      <p>
-        Your report is completely anonymous. We will not store any personal
-        information, and your identity will remain confidential.
-      </p>
-      <form @submit.prevent="submitForm">
-        <div class="form-group">
-          <label for="incidentType">Type of Incident</label>
-          <select id="incidentType" v-model="form.incidentType" required>
-            <option value="" disabled>Select Incident Type</option>
-            <option v-for="type in incidentTypes" :key="type" :value="type">
-              {{ type }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="organization">Organization</label>
-          <input
-            id="organization"
-            type="text"
-            v-model="form.organization"
-            placeholder="Enter organization (e.g., Google, Microsoft...)"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="location">Location (Optional)</label>
-          <input
-            id="location"
-            type="text"
-            v-model="form.location"
-            placeholder="Enter location (e.g., city or region)"
-          />
+    <div id="app">
+      <div class="min-h-screen w-full bg-slate-900">
+        <!-- Header -->
+        <div class="flex justify-between items-center px-6 py-4 bg-slate-800">
+          <div class="title">
+            <h1 class="text-3xl font-bold text-blue-400">CyberKhabar</h1>
+          </div>
+          <div class="flex gap-4">
+            <button class="px-4 py-2 text-blue-400 border border-blue-400 rounded-md hover:bg-blue-400/10 transition-all">
+              Reload
+            </button>
+            
+          </div>
         </div>
 
         <div class="form-group">
@@ -89,7 +65,6 @@
         </div>
 
         <button type="submit" class="submit-btn">Submit Report</button>
-      </form>
     </div>
   </div>
 </template>
