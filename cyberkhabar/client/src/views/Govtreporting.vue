@@ -1,143 +1,141 @@
 <template>
-    <div class="p-6 text-white">
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold mb-2">Government Reporting Dashboard</h1>
-        <p class="text-slate-300">Manage and submit your cybersecurity reports</p>
-      </div>
+    <div class="min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
+        <div id="cyber-report-form" class="max-w-4xl mx-auto bg-gray-800 text-white rounded-lg p-5 shadow-lg">
+            <header>
+                <h1 class="text-center  text-blue-400 mb-4:text-3xl lg:text-4xl font-bold">Report Cybersecurity Incident</h1>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Report Card -->
-        <div class="bg-slate-800 rounded-lg p-6 hover:bg-slate-700 transition-all">
-          <h2 class="text-xl font-semibold mb-4">New Report</h2>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-2">Incident Type</label>
-              <select v-model="reportData.incidentType" class="w-full bg-slate-900 rounded p-2 border border-slate-600">
-                <option value="phishing">Phishing Attack</option>
-                <option value="malware">Malware</option>
-                <option value="databreach">Data Breach</option>
-                <option value="ransomware">Ransomware</option>
-              </select>
-            </div>
-          
-            <div>
-              <label class="block text-sm font-medium mb-2">Description</label>
-              <textarea 
-                v-model="reportData.description"
-                class="w-full bg-slate-900 rounded p-2 border border-slate-600 h-24"
-                placeholder="Describe the incident..."
-              ></textarea>
-            </div>
+              
+            </header>
+            <form @submit.prevent="submitReport" class="mt-8 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-group">
+                        <label for="incidentType" class="block mb-1 font-bold text-gray-200">Type of Incident</label>
+                        <select v-model="form.incidentType" id="incidentType" required class="w-full p-2 text-base border border-gray-600 rounded bg-gray-700 text-white">
+                            <option disabled value="">Select Incident Type</option>
+                            <option>Phishing</option>
+                            <option>Data Breach</option>
+                            <option>Ransomware</option>
+                            <option>Denial of Service</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
 
-            <button 
-              @click="submitReport"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors"
-            >
-              Submit Report
-            </button>
-          </div>
-        </div>
-
-        <!-- Recent Reports -->
-        <div class="bg-slate-800 rounded-lg p-6">
-          <h2 class="text-xl font-semibold mb-4">Recent Reports</h2>
-          <div class="space-y-4">
-            <div v-for="(report, index) in recentReports" :key="index" class="border-b border-slate-700 pb-4">
-              <div class="flex justify-between items-start">
-                <div>
-                  <p class="font-medium">{{ report.type }}</p>
-                  <p class="text-sm text-slate-400">{{ report.date }}</p>
+                    <div class="form-group">
+                        <label for="organization" class="block mb-1 font-bold text-gray-200">Organization</label>
+                        <input type="text" id="organization" v-model="form.organization" placeholder="Enter organization (e.g., Google, Microsoft...)" class="w-full p-2 text-base border border-gray-600 rounded bg-gray-700 text-white placeholder-gray-400" />
+                    </div>
                 </div>
-                <span :class="getStatusClass(report.status)" class="px-2 py-1 rounded text-xs">
-                  {{ report.status }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Statistics Card -->
-        <div class="bg-slate-800 rounded-lg p-6">
-          <h2 class="text-xl font-semibold mb-4">Report Statistics</h2>
-          <div class="space-y-4">
-            <div class="flex justify-between items-center">
-              <span>Total Reports</span>
-              <span class="font-bold">{{ statistics.total }}</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span>Pending</span>
-              <span class="text-yellow-500 font-bold">{{ statistics.pending }}</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span>Resolved</span>
-              <span class="text-green-500 font-bold">{{ statistics.resolved }}</span>
-            </div>
-          </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-group">
+                        <label for="location" class="block mb-1 font-bold text-gray-200">Location (Optional)</label>
+                        <input type="text" id="location" v-model="form.location" placeholder="Enter location (e.g., city or region)" class="w-full p-2 text-base border border-gray-600 rounded bg-gray-700 text-white placeholder-gray-400" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="source" class="block mb-1 font-bold text-gray-200">Source of Information</label>
+                        <input type="text" id="source" v-model="form.source" placeholder="Enter the source (e.g., internal report, Twitter, Reddit...)" class="w-full p-2 text-base border border-gray-600 rounded bg-gray-700 text-white placeholder-gray-400" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="details" class="block mb-1 font-bold text-gray-200">Incident Details</label>
+                    <textarea id="details" v-model="form.details" rows="5" placeholder="Provide details of the incident..." required class="w-full p-2 text-base border border-gray-600 rounded bg-gray-700 text-white placeholder-gray-400"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="form-group">
+                        <label for="evidence" class="block mb-1 font-bold text-gray-200">Upload Evidence (Optional)</label>
+                        <input type="file" id="evidence" @change="handleFileUpload" class="w-full p-2 text-base border border-gray-600 rounded bg-gray-700 text-white"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="impact" class="block mb-1 font-bold text-gray-200">Impact of Incident</label>
+                        <select v-model="form.impact" id="impact" class="w-full p-2 text-base border border-gray-600 rounded bg-gray-700 text-white">
+                            <option disabled value="">Select Impact</option>
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="severity" class="block mb-1 font-bold text-gray-200">Severity Level</label>
+                        <select v-model="form.severity" id="severity" class="w-full p-2 text-base border border-gray-600 rounded bg-gray-700 text-white">
+                            <option disabled value="">Select Severity</option>
+                            <option>Low</option>
+                            <option>Moderate</option>
+                            <option>Critical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full p-3 bg-blue-500 rounded text-xl text-white hover:bg-gray-700 hover:border transition-colors duration-300">Submit Report</button>
+            </form>
+            <footer class="text-center mt-8 text-xs md:text-sm text-gray-400">
+                <p>© 2024 Cyberkhabar. Empowering a secure digital India.</p>
+            </footer>
         </div>
-      </div>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'Govtreporting',
+    name: 'GovtReporting',
     data() {
-      return {
-        reportData: {
-          incidentType: 'phishing',
-          description: ''
-        },
-        recentReports: [
-          { type: 'Phishing Attack', date: '2024-01-15', status: 'pending' },
-          { type: 'Data Breach', date: '2024-01-14', status: 'resolved' },
-          { type: 'Ransomware', date: '2024-01-13', status: 'in-progress' }
-        ],
-        statistics: {
-          total: 45,
-          pending: 12,
-          resolved: 33
+        return {
+            form: {
+                incidentType: '',
+                organization: '',
+                location: '',
+                details: '',
+                source: '',
+                evidence: null,
+                impact: '',
+                severity: ''
+            }
         }
-      }
     },
     methods: {
-      submitReport() {
-        // Handle report submission logic here
-        console.log('Report submitted:', this.reportData)
-      },
-      getStatusClass(status) {
-        const classes = {
-          pending: 'bg-yellow-500/20 text-yellow-500',
-          resolved: 'bg-green-500/20 text-green-500',
-          'in-progress': 'bg-blue-500/20 text-blue-500'
+        handleFileUpload(event) {
+            this.form.evidence = event.target.files[0]
+        },
+        async submitReport() {
+            try {
+                const formData = new FormData()
+                
+                Object.keys(this.form).forEach(key => {
+                    formData.append(key, this.form[key])
+                })
+
+                const response = await fetch('/api/reports', {
+                    method: 'POST',
+                    body: formData
+                })
+
+                if (response.ok) {
+                    this.resetForm()
+                    alert('Report submitted successfully!')
+                } else {
+                    throw new Error('Failed to submit report')
+                }
+            } catch (error) {
+                console.error('Error submitting report:', error)
+                alert('Failed to submit report. Please try again.')
+            }
+        },
+        resetForm() {
+            this.form = {
+                incidentType: '',
+                organization: '',
+                location: '',
+                details: '',
+                source: '',
+                evidence: null,
+                impact: '',
+                severity: ''
+            }
         }
-        return classes[status]
-      }
     }
 }
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-.grid {
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-}
-
-select, textarea {
-    outline: none;
-}
-
-select:focus, textarea:focus {
-    border-color: #3b82f6;
-}
-</style>
