@@ -8,11 +8,9 @@
           </div>
           <div class="flex gap-4">
             <button class="px-4 py-2 text-blue-400 border border-blue-400 rounded-md hover:bg-blue-400/10 transition-all">
-              Login
+              Reload
             </button>
-            <button class="px-4 py-2 bg-blue-400 text-slate-900 rounded-md hover:bg-blue-500 transition-all">
-              Sign Up
-            </button>
+            
           </div>
         </div>
   
