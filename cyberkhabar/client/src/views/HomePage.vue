@@ -52,9 +52,9 @@
             <div>
               <h4 class="text-lg font-semibold text-slate-200 mb-2">Location</h4>
               <select class="w-full px-3 py-2 bg-slate-700 rounded-md border-none text-slate-200">
-                <option>North America</option>
-                <option>Europe</option>
-                <option>Asia</option>
+                <option>North India</option>
+                <option>South India</option>
+                <option>Cental India</option>
               </select>
             </div>
 
