@@ -28,7 +28,7 @@
             :class="currentView === 'Govtreporting' ? 'bg-blue-500' : 'hover:bg-slate-700'"
             class="w-12 h-12 flex items-center justify-center rounded-md transition-all"
           >
-            <font-awesome-icon :icon="['fas', 'building-government']" class="text-slate-200 text-lg" />
+            <font-awesome-icon :icon="['fas', 'file-alt']" class="text-slate-200 text-lg" />
           </button>
         </div>
       </aside>
@@ -44,7 +44,7 @@
 
 <script>
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faHome, faChartLine, faBuildingGovernment } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faChartLine, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 // Import your components
@@ -53,7 +53,7 @@ import Dashboard from "./views/Dashboard.vue";
 import Govtreporting from "./views/Govtreporting.vue";
 
 // Add icons to the library
-library.add(faHome, faChartLine, faBuildingGovernment);
+library.add(faHome, faChartLine, faFileAlt);
 
 export default {
   name: "App",
@@ -61,7 +61,7 @@ export default {
     HomePage,
     Dashboard,
     Govtreporting,
-    FontAwesomeIcon
+    FontAwesomeIcon,
   },
   data() {
     return {
@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     currentViewComponent() {
-      switch(this.currentView) {
+      switch (this.currentView) {
         case "Dashboard":
           return Dashboard;
         case "Govtreporting":
