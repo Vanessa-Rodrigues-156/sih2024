@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <somecomponent />
+    <Dashboard />
+    <Govtreporting />
   
  
   </div>
@@ -8,15 +9,15 @@
 
 <script>
 
-import somecomponent from "./components/somecomponent.vue";
+import Dashboard from "./views/Dashboard.vue";
 import Govtreporting from "./views/Govtreporting.vue";
 
 export default {
   name: "App",
   components: {
-    somecomponent,
+    Dashboard,
+    Govtreporting
    
-
   },
 };
 </script> 
