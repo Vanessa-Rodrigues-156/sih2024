@@ -1,69 +1,16 @@
 from neo4j import GraphDatabase
 import json
 
-# Load JSON data
-data = json.loads('''[
-  {
-    "incident_name": "Mobikwik Data Breach",
-    "date_of_incident": "2024-12-10T13:54:24.540655",
-    "severity_level": "High",
-    "affected_systems": "Mobile payment services",
-    "threat_vector": "Data theft",
-    "threat_actor": "Unknown",
-    "mitre_attack_mapping": ["TA1059"],
-    "indicators_of_compromise": [
-      "Leaked KYC details of customers",
-      "Leaked addresses",
-      "Leaked phone numbers",
-      "Leaked Aadhaar card details",
-      "Leaked card details linked to MobiKwik Wallet"
-    ],
-    "data_impacted": "Over 3.5 million KYC details",
-    "financial_operational_impact": "Potential financial losses due to data breaches and reputational damage",
-    "response_actions_taken": [
-      "Data audit conducted",
-      "Third-party security review initiated"
-    ],
-    "recommended_mitigation": "Implement stricter security measures to protect sensitive customer data",
-    "tlp_classification": "Confidential",
-    "extra_relevant_information": {
-      "number_of_merchants": 1.5 million,
-      "number_of_customers": 55 million,
-      "source_of_data_leak": "Dark web",
-      "price_of_data_on_dark_web": "1.5 BTC or $85,000"
-    }
-  },
-  {
-    "incident_name": "Zomato Malware Attack",
-    "date_of_incident": "2024-12-15T10:00:00.000000",
-    "severity_level": "Medium",
-    "affected_systems": "Food delivery services",
-    "threat_vector": "Malware",
-    "threat_actor": "Unknown",
-    "mitre_attack_mapping": ["TA0002"],
-    "indicators_of_compromise": [
-      "Malicious software detected",
-      "Unauthorized access attempts"
-    ],
-    "data_impacted": "Customer payment information",
-    "financial_operational_impact": "Potential loss of customer trust",
-    "response_actions_taken": [
-      "Incident response team activated",
-      "User  notifications sent"
-    ],
-    "recommended_mitigation": "Enhance malware detection systems",
-    "tlp_classification": "Confidential",
-    "extra_relevant_information": {
-      "number_of_merchants": 1 million,
-      "number_of_customers": 50 million,
-      "source_of_data_leak": "Unknown",
-      "price_of_data_on_dark_web": "N/A"
-    }
-  }
-]''')
+# Load JSON data from a file
+with open('data.json', 'r') as file:
+    data = json.load(file)
+
+# Ensure data is a dictionary
+if not isinstance(data, dict):
+    raise TypeError("Data must be a dictionary")
 
 # Connect to Neo4j
-driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
+driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck"))
 
 def create_incident(tx, incident):
     # Create incident node
@@ -71,33 +18,48 @@ def create_incident(tx, incident):
         CREATE (i:Incident {
             name: $name,
             date: $date,
-            severity: $severity,
-            affected_systems: $affected_systems,
-            threat_vector: $threat_vector,
-            threat_actor: $threat_actor,
-            data_impacted: $data_impacted,
-            financial_impact: $financial_impact,
-            recommended_mitigation: $recommended_mitigation
+            location: $location,
+            target: $target,
+            amount_siphoned: $amount_siphoned,
+            transactions: $transactions,
+            other_damage: $other_damage,
+            vulnerability: $vulnerability,
+            police_report: $police_report,
+            legal_action: $legal_action,
+            bank_action: $bank_action
         })
-    """, name=incident['incident_name'], date=incident['date_of_incident'], 
-    severity=incident['severity_level'], affected_systems=incident['affected_systems'], 
-    threat_vector=incident['threat_vector'], threat_actor=incident['threat_actor'], 
-    data_impacted=incident['data_impacted'], 
-    financial_impact=incident['financial_operational_impact'], 
-    recommended_mitigation=incident['recommended_mitigation'])
+    """, name=incident['Incident Name'], date=incident['Date of Incident'], 
+    location=incident['Location'], target=incident['Target'], 
+    amount_siphoned=incident['Impact']['Amount siphoned'], 
+    transactions=incident['Impact']['Transactions'], 
+    other_damage=incident['Impact']['Other damage'], 
+    vulnerability=incident['Vulnerability'], 
+    police_report=incident['Response']['Police report'], 
+    legal_action=incident['Response']['Legal action'], 
+    bank_action=incident['Response']['Bank action'])
 
-def create_relationships(tx, incident):
-    # Create relationships based on common parameters
-    for other_incident in data:
-        if incident['threat_vector'] == other_incident['threat_vector'] and incident['incident_name'] != other_incident['incident_name']:
-            tx.run("""
-                MATCH (i1:Incident {name: $name1}), (i2:Incident {name: $name2})
-                CREATE (i1)-[:RELATED_TO {type: 'THREAT_VECTOR'}]->(i2)
-            """, name1=incident['incident_name'], name2=other_incident['incident_name'])
+def create_prevention_actions(tx, incident):
+    # Create prevention actions nodes and relationships
+    for action in incident['Prevention']['Recommended actions']:
+        tx.run("""
+            MATCH (i:Incident {name: $name})
+            CREATE (p:PreventionAction {action: $action})
+            CREATE (i)-[:RECOMMENDED]->(p)
+        """, name=incident['Incident Name'], action=action)
 
-with driver.session() as session:
-    for incident in data:
-        session.write_transaction(create_incident, incident)
-        session.write_transaction(create_relationships, incident)
+def create_methodology(tx, incident):
+    # Create methodology nodes and relationships
+    for method in incident['Methodology']['Malware usage']:
+        tx.run("""
+            MATCH (i:Incident {name: $name})
+            CREATE (m:Methodology {method: $method})
+            CREATE (i)-[:USED]->(m)
+        """, name=incident['Incident Name'], method=method)
 
-driver.close()
+try:
+    with driver.session(database="maindb") as session:  # Specify the database name here
+        session.execute_write(create_incident, data)
+        session.execute_write(create_prevention_actions, data)
+        session.execute_write(create_methodology, data)
+finally:
+    driver.close()
