@@ -99,10 +99,10 @@ const stats = ref({});
 const fetchData = async () => {
   try {
     const [dashboardStatsResponse, chartDataResponse, recentIncidentsResponse, alertsResponse] = await Promise.all([
-      fetch('http://localhost:8000/api/dashboard/stats'),
-      fetch('http://localhost:8000/api/dashboard/chart-data'),
-      fetch('http://localhost:8000/api/incidents/recent'),
-      fetch('http://localhost:8000/api/alerts')
+      fetch('http://localhost:5001/api/dashboard/stats'),
+      fetch('http://localhost:5001/api/dashboard/chart-data'),
+      fetch('http://localhost:5001/api/incidents/recent'),
+      fetch('http://localhost:5001/api/alerts')
     ]);
 
     if (!dashboardStatsResponse.ok || !chartDataResponse.ok || !recentIncidentsResponse.ok || !alertsResponse.ok) {
@@ -135,7 +135,7 @@ onBeforeUnmount(() => {
 
 const handleNewIncident = async (incidentData) => {
   try {
-    const response = await fetch('http://localhost:8000/api/incidents', {
+    const response = await fetch('http://localhost:5001/api/incidents', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
