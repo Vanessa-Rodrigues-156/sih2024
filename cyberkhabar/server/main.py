@@ -16,13 +16,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Database connection
-driver = GraphDatabase.driver(
-    "bolt://localhost:7687",
-    auth=("neo4j", "database")
-)
+# Connect to Neo4j
+driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck"))
+
 if not driver.verify_connectivity():
-    raise Exception("Failed to connect to the database.") 
+    print("Failed to connect to the database.") 
 else :
     print("success")
 # Models
