@@ -7,20 +7,16 @@
           <h1 class="text-3xl font-bold text-blue-400">CyberKhabar</h1>
         </div>
         <div class="flex gap-4">
-          <button @click="reloadPage"  class="px-4 py-2 text-blue-400 border border-blue-400 rounded-md hover:bg-blue-400/10 transition-all">
+          <button class="px-4 py-2 text-blue-400 border border-blue-400 rounded-md hover:bg-blue-400/10 transition-all">
             Reload
           </button>
+          
         </div>
       </div>
 
       <!-- Search Bar (Below Header) -->
       <div class="w-full bg-slate-800 py-4 px-6">
-        <input 
-          type="text" 
-          class="w-full px-6 py-3 bg-slate-700 rounded-md text-slate-200" 
-          placeholder="Search News..." 
-          v-model="searchQuery" 
-        />
+        <input type="text" class="w-full px-6 py-3 bg-slate-700 rounded-md text-slate-200" placeholder="Search News..." />
       </div>
 
       <!-- Main Content (Flex Container) -->
@@ -56,9 +52,9 @@
             <div>
               <h4 class="text-lg font-semibold text-slate-200 mb-2">Location</h4>
               <select class="w-full px-3 py-2 bg-slate-700 rounded-md border-none text-slate-200">
-                <option>North India</option>
-                <option>South India</option>
-                <option>Cental India</option>
+                <option>North America</option>
+                <option>Europe</option>
+                <option>Asia</option>
               </select>
             </div>
 
@@ -91,6 +87,7 @@
             </h2>
             <div>
               <div v-for="news in filteredNews" :key="news.id" class="bg-slate-700 rounded-lg overflow-hidden hover:-translate-y-1 transition-transform mb-4">
+                
                 <div class="p-4">
                   <h3 class="text-slate-100 font-medium mb-2">{{ news.title }}</h3>
                   <p class="text-slate-400 mb-4">{{ news.description }}</p>
@@ -131,104 +128,76 @@ export default {
   name: 'CyberKhabar',
   data() {
     return {
-      attackTypes: [],
-      impactLevels: [],
-      locations: [],
+      attackTypes: ['Ransomware', 'Phishing', 'DDoS', 'Malware'],
+      impactLevels: ['High', 'Medium', 'Low'],
+      locations: ['North America', 'Europe', 'Asia'],
       selectedFilters: {
         type: [],
         impact: [],
         location: [],
-        recency: '7',
+        recency: '7'
       },
-      news: [],
+      news: [
+        {
+          id: 1,
+          title: 'Ransomware Attack on Healthcare',
+          description: 'A major ransomware attack has affected healthcare facilities...',
+          image: 'path/to/image1.jpg'
+        },
+        {
+          id: 2,
+          title: 'Phishing Campaign Targets Banks',
+          description: 'A new phishing campaign is targeting major banks...',
+          
+        },
+        {
+          id: 3,
+          title: 'DDoS Attack on Government Websites',
+          description: 'Government websites have been hit by a DDoS attack...',
+          
+        },
+        {
+          id:4,
+          title:'Cosmos Bank Cyber Attack',
+          description:'Banking transaction and customer data was stolen...'
+        }
+      ],
       currentStats: {
-        'Active Threats': 0,
-        'Resolved Incidents': 0,
-        'Pending Alerts': 0,
-        relatedIncidents: 0,
-      },
-      searchQuery: '', // New data property for search query
+        'Active Threats': 5,
+        'Resolved Incidents': 12,
+        'Pending Alerts': 3,
+        relatedIncidents: 20
+      }
     };
   },
   computed: {
     filteredNews() {
-      const query = this.searchQuery.toLowerCase().split(/\s+/); // Split search query into keywords
-
-      // Function to count the number of keyword matches in a title
-      const countKeywordMatches = (title, query) => {
-        return query.reduce((count, keyword) => {
-          return title.includes(keyword) ? count + 1 : count;
-        }, 0);
-      };
-
-      // Sort the news based on keyword matches in descending order
-      return this.news
-        .map((newsItem) => ({
-          ...newsItem,
-          matchCount: countKeywordMatches(newsItem.title.toLowerCase(), query),
-        }))
-        .filter((newsItem) => newsItem.matchCount > 0) // Filter out news with no matches
-        .sort((a, b) => b.matchCount - a.matchCount); // Sort by match count in descending order
-    },
+      return this.news.filter(newsItem => {
+        return (
+          (this.selectedFilters.type.length === 0 || this.selectedFilters.type.includes(newsItem.type)) &&
+          (this.selectedFilters.impact.length === 0 || this.selectedFilters.impact.includes(newsItem.impact)) &&
+          (this.selectedFilters.location.length === 0 || this.selectedFilters.location.includes(newsItem.location))
+        );
+      });
+    }
   },
   methods: {
-    reloadPage() {
-      alert("The page is reloaded");
-      window.location.reload();
-    },
     getStatsIcon(key) {
       const icons = {
         'Active Threats': 'fas fa-exclamation-triangle',
         'Resolved Incidents': 'fas fa-check-circle',
-        'Pending Alerts': 'fas fa-clock',
+        'Pending Alerts': 'fas fa-clock'
       };
       return icons[key] || 'fas fa-info-circle';
-    },
-    async fetchNews() {
-      const response = await fetch('/api/incidents');
-      this.news = await response.json();
-      if (this.news!=null)
-       console.log("the response is stored")
-  
-    },
-    async fetchAttackTypes() {
-      const response = await fetch('/api/attack-types');
-      this.attackTypes = await response.json();
-    },
-    async fetchImpactLevels() {
-      const response = await fetch('/api/impact-levels');
-      this.impactLevels = await response.json();
-    },
-    async fetchLocations() {
-      const response = await fetch('/api/locations');
-      this.locations = await response.json();
-    },
-    async fetchCurrentStats() {
-      const response = await fetch('/api/current-stats');
-      this.currentStats = await response.json();
-    },
-  },
-  async created() {
-    try {
-      await Promise.all([
-        this.fetchNews(),
-        this.fetchAttackTypes(),
-        this.fetchImpactLevels(),
-        this.fetchLocations(),
-        this.fetchCurrentStats(),
-      ]);
-    } catch (error) {
-      console.error('Error fetching data:', error);
     }
-  },
+  }
 };
 </script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;

@@ -111,6 +111,27 @@ async def login(request: SignupRequest):
 
 # Add more endpoints as needed
 
+@app.get("/api/incidents/{incident_id}", response_model=Dict)
+async def read_incident(incident_id: str):
+    try:
+        with get_db().session() as session:
+            result = session.run("MATCH (i:Incident) WHERE id(i) = $incident_id RETURN i", incident_id=int(incident_id))
+            record = result.single()
+            if record is None:
+                raise HTTPException(status_code=404, detail="Incident not found")
+            
+            # Convert the Neo4j Node to a dictionary
+            incident_node = record["i"]
+            incident_data = {
+                "identity": incident_node.id,
+                "labels": list(incident_node.labels),
+                "properties": dict(incident_node)
+            }
+        return incident_data
+    except :
+        raise HTTPException(status_code=503, detail="Service Unavailable")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=5001)
