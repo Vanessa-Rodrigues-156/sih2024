@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # Replace with your Neo4j connection details
 uri = "bolt://localhost:7687"
 user = "neo4j"
-password = "your_password"
+password = "QWERTYUIOP0"
 
 # Connect to Neo4j
 driver = GraphDatabase.driver(uri, auth=(user, password))
