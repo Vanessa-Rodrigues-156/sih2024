@@ -1,27 +1,10 @@
 <template>
   <div id="app">
+    <router-view /> <!-- This will render the appropriate component based on the route -->
     <div class="min-h-screen w-full bg-slate-900 flex">
       <!-- Check if loggedIn is true, then show the Sidebar and Main Content -->
-      <div v-if="!loggedIn" class="w-full flex justify-center items-center">
-        <!-- Show Login and Signup Form -->
-        <form @submit.prevent="login" class="bg-slate-800 p-6 rounded-md w-96">
-          <h2 class="text-white mb-4 text-2xl">Login</h2>
-          <div class="mb-4">
-            <label for="username" class="text-white">Username</label>
-            <input v-model="loginUsername" type="text" id="username" class="mt-2 p-2 w-full" required />
-          </div>
-          <div class="mb-4">
-            <label for="password" class="text-white">Password</label>
-            <input v-model="loginPassword" type="password" id="password" class="mt-2 p-2 w-full" required />
-          </div>
-          <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md">Login</button>
-          <p class="mt-4 text-white">
-            Don't have an account? <span @click="showSignup" class="text-blue-400 cursor-pointer">Sign Up</span>
-          </p>
-        </form>
-      </div>
 
-      <div v-else class="flex w-full">
+      <div  class="flex w-full">
         <!-- Sidebar -->
         <aside class="bg-slate-800 w-20 py-4 flex flex-col justify-between items-center">
           <div class="flex flex-col gap-4">
