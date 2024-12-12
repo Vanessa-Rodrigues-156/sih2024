@@ -1,9 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from neo4j import GraphDatabase, ServiceUnavailable
+from neo4j import GraphDatabase
 from pydantic import BaseModel
 from typing import List
 import json
+import uvicorn
 
 app = FastAPI()
 
@@ -18,23 +19,12 @@ app.add_middleware(
 
 # Neo4j connection configuration
 URI = "bolt://localhost:7687"
-AUTH = ("neo4j", "your_password")  # Replace with your credentials
+AUTH = ("neo4j", "QWERTYUIOP0")  # Replace with your credentials
 
 def get_db():
     return GraphDatabase.driver(URI, auth=AUTH)
 
-@app.on_event("startup")
-async def startup_event():
-    try:
-        with get_db().session() as session:
-            session.run("RETURN 1")
-        print("Connected to Neo4j")
-    except ServiceUnavailable:
-        raise HTTPException(status_code=503, detail="Service Unavailable")
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    get_db().close()
 
 # Define your data models
 class Incident(BaseModel):
@@ -56,24 +46,30 @@ class Incident(BaseModel):
 @app.post("/api/incidents")
 async def create_incident(incident: Incident):
     with get_db().session() as session:
-        session.run("""
-            CREATE (i:Incident {
-                incident_name: $incident_name,
-                date_of_incident: $date_of_incident,
-                severity_level: $severity_level,
-                affected_systems: $affected_systems,
-                threat_vector: $threat_vector,
-                threat_actor: $threat_actor,
-                mitre_attck_mapping: $mitre_attck_mapping,
-                iocs: $iocs,
-                data_impacted: $data_impacted,
-                financial_operational_impact: $financial_operational_impact,
-                response_actions_taken: $response_actions_taken,
-                recommended_mitigation: $recommended_mitigation,
-                tlp_classification: $tlp_classification
-            })
-        """, incident.dict())
-    return {"status": "success"}
+         result = session.run("MATCH (i:Incident) RETURN i")
+         incidents= [record["i"] for record in result]
+         
+
+class SignupRequest(BaseModel):
+    username: str
+    password: str
+    email: str
+
+@app.post("/api/auth/signup")
+async def signup(request: SignupRequest):
+    # Here you would typically add logic to save the user to a database
+    # For demonstration, we'll assume the signup is always successful
+
+    # Return a positive response
+    return {"message": "Signup successful", "username": request.username}
+
+@app.post("/api/auth/login")
+async def login(request: SignupRequest):
+    # Here you would typically add logic to save the user to a database
+    # For demonstration, we'll assume the signup is always successful
+
+    # Return a positive response
+    return {"message": "Login successful", "username": request.username}
 
 # Add more endpoints as needed
 

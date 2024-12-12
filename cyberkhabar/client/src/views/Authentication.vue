@@ -25,6 +25,7 @@
           </div>
           <button
             type="submit"
+
             class="w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none"
           >
             Login
