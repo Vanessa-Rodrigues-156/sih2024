@@ -114,7 +114,7 @@ export default {
         // Set loggedIn to true
         this.loggedIn = true;
         // After login, show the dashboard or home page
-        this.currentView = 'Dashboard'; // or set to 'HomePage' if preferred
+        this.currentView = 'HomePage'; // or set to 'HomePage' if preferred
       } else {
         window.alert('Login failed!');
       }
