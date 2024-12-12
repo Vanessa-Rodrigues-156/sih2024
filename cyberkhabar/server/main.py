@@ -19,10 +19,12 @@ app.add_middleware(
 # Connect to Neo4j
 driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck"))
 
-if not driver.verify_connectivity():
-    print("Failed to connect to the database.") 
-else :
-    print("success")
+try:
+    driver.verify_connectivity()
+    print("Successfully connected to the database.")
+except Exception as e:
+    print(f"Failed to connect to the database: {e}")
+
 # Models
 
 class Report(BaseModel):
