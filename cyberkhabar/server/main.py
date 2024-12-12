@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
-from neo4j import GraphDatabase
+from neo4j import GraphDatabase,ServiceUnavailable
 
 app = FastAPI()
 
@@ -21,8 +21,16 @@ URI = "neo4j://localhost:7687"
 AUTH = ("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck")  # Replace with your credentials
 DATABASE = "incident"
 
+
 def get_db():
     return GraphDatabase.driver(URI, auth=AUTH, database=DATABASE)
+
+try:
+    with get_db().session(database=DATABASE) as session:
+        session.run("RETURN 1")
+    print("success")
+except ServiceUnavailable:
+    raise HTTPException(status_code=503, detail="Service Unavailable")
 
 # Models
 class Incident(BaseModel):
@@ -44,8 +52,9 @@ class Report(BaseModel):
 
 class Alert(BaseModel):
     id: str
-    message: str
+    title: str
     date: datetime
+    severity:str
 
 class Location(BaseModel):
     location: str
@@ -69,12 +78,13 @@ class NewsHeadline(BaseModel):
 # Routes
 @app.get("/api/incidents", response_model=List[Incident])
 async def get_incidents():
-    with get_db().session() as session:
+    with get_db().session(database=DATABASE) as session:
         result = session.run("""
             MATCH (i:Incident)
             RETURN i.id as id, i.title as title, i.description as description, i.date as date
         """)
         incidents = [Incident(id=record["id"], title=record["title"], description=record["description"], date=record["date"]) for record in result]
+       # incidents=[Incident(id=[1,2,3],title=["Ransome ware ","databreach","DDoS"],description=["healthcare data affected","finance sector affected","goverenment sector affected"], date=["21-20-23","31-11-23","30-12-21"])]
         return incidents
 
 @app.get("/api/threats", response_model=List[Threat])
@@ -102,9 +112,9 @@ async def get_alerts():
     with get_db().session() as session:
         result = session.run("""
             MATCH (a:Alert)
-            RETURN a.id as id, a.message as message, a.date as date
+            RETURN a.id as id, a.title as title, a.date as date, a.severity as severity 
         """)
-        alerts = [Alert(id=record["id"], message=record["message"], date=record["date"]) for record in result]
+        alerts = [Alert(id=record["id"], title=record["message"], date=record["date"],severity=record["severity"]) for record in result]
         return alerts
 
 @app.get("/api/reports/{report_id}", response_model=Report)
@@ -300,4 +310,4 @@ async def get_user_profile(username: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5001)
+    uvicorn.run(app, host="localhost", port=5001)

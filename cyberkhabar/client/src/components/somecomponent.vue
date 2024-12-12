@@ -129,6 +129,7 @@ export default {
         async fetchIncidents() {
             const response = await fetch('http://localhost:5001/api/incidents');
             this.incidents = await response.json();
+            console.log(this.incidents);
         },
         async fetchThreats() {
             const response = await fetch('http://localhost:5001/api/threats');
