@@ -82,7 +82,7 @@ export default {
       signupUsername: '',
       signupPassword: '',
       loginUsername: '',
-      loginPassword: ''
+      loginPassword: '',
     };
   },
   methods: {
@@ -93,18 +93,24 @@ export default {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: this.signupUsername,
-            password: this.signupPassword
-          })
+            password: this.signupPassword,
+          }),
         });
+
         const data = await response.json();
+
         if (data.message) {
           // Show an alert on successful signup
           window.alert(data.message);
+          // Reset the signup form fields
+          this.signupUsername = '';
+          this.signupPassword = '';
           // After signup, switch to login form
           this.toggleForm();
         }
       } catch (error) {
         console.error('Error:', error);
+        window.alert('Signup failed. Please try again.');
       }
     },
     async login() {
@@ -114,22 +120,30 @@ export default {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             username: this.loginUsername,
-            password: this.loginPassword
-          })
+            password: this.loginPassword,
+          }),
         });
+
         const data = await response.json();
+
         if (data.message) {
           // Show an alert on successful login
           window.alert(data.message);
+          // Reset the login form fields
+          this.loginUsername = '';
+          this.loginPassword = '';
+        } else {
+          window.alert('Invalid credentials. Please try again.');
         }
       } catch (error) {
         console.error('Error:', error);
+        window.alert('Login failed. Please try again.');
       }
     },
     toggleForm() {
       this.showLogin = !this.showLogin; // Toggle between login and signup
-    }
-  }
+    },
+  },
 };
 </script>
 
