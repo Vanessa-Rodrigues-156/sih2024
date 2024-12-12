@@ -6,7 +6,6 @@
                 <h1 class="text-4xl font-bold text-blue-400">CyberKhabar</h1>
             </div>
         </div>
-
         <!-- Report Content -->
         <div class="container mx-auto px-6 py-8">
             <div class="bg-slate-800 rounded-lg shadow-lg p-8">

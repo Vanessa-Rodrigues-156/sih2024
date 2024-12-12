@@ -64,6 +64,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import HomePage from "./views/HomePage.vue";
 import Dashboard from "./views/Dashboard.vue";
 import Govtreporting from "./views/Govtreporting.vue";
+import ttppage from './views/ttppage.vue';
 
 // Add icons to the library
 library.add(faHome, faChartLine, faFileAlt);
@@ -74,6 +75,7 @@ export default {
     HomePage,
     Dashboard,
     Govtreporting,
+    ttppage,
     FontAwesomeIcon,
   },
   data() {
