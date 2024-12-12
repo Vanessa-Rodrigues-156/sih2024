@@ -124,67 +124,81 @@
 
 <script>
 export default {
-  name: 'CyberKhabar',
-  data() {
-    return {
-      attackTypes: ['Ransomware', 'Phishing', 'DDoS', 'Malware'],
-      impactLevels: ['High', 'Medium', 'Low'],
-      locations: ['North America', 'Europe', 'Asia'],
-      selectedFilters: {
-        type: [],
-        impact: [],
-        location: [],
-        recency: '7'
-      },
-      news: [
-        {
-          id: 1,
-          title: 'Ransomware Attack on Healthcare',
-          description: 'A major ransomware attack has affected healthcare facilities...',
-          image: 'path/to/image1.jpg'
-        },
-        {
-          id: 2,
-          title: 'Phishing Campaign Targets Banks',
-          description: 'A new phishing campaign is targeting major banks...',
-          image: 'path/to/image2.jpg'
-        },
-        {
-          id: 3,
-          title: 'DDoS Attack on Government Websites',
-          description: 'Government websites have been hit by a DDoS attack...',
-          image: 'path/to/image3.jpg'
+    name: 'CyberKhabar',
+    data() {
+        return {
+            attackTypes: [],
+            impactLevels: [],
+            locations: [],
+            selectedFilters: {
+                type: [],
+                impact: [],
+                location: [],
+                recency: '7'
+            },
+            news: [],
+            currentStats: {
+                'Active Threats': 0,
+                'Resolved Incidents': 0,
+                'Pending Alerts': 0,
+                relatedIncidents: 0
+            }
+        };
+    },
+    computed: {
+        filteredNews() {
+            return this.news.filter(newsItem => {
+                return (
+                    (this.selectedFilters.type.length === 0 || this.selectedFilters.type.includes(newsItem.type)) &&
+                    (this.selectedFilters.impact.length === 0 || this.selectedFilters.impact.includes(newsItem.impact)) &&
+                    (this.selectedFilters.location.length === 0 || this.selectedFilters.location.includes(newsItem.location))
+                );
+            });
         }
-      ],
-      currentStats: {
-        'Active Threats': 5,
-        'Resolved Incidents': 12,
-        'Pending Alerts': 3,
-        relatedIncidents: 20
-      }
-    };
-  },
-  computed: {
-    filteredNews() {
-      return this.news.filter(newsItem => {
-        return (
-          (this.selectedFilters.type.length === 0 || this.selectedFilters.type.includes(newsItem.type)) &&
-          (this.selectedFilters.impact.length === 0 || this.selectedFilters.impact.includes(newsItem.impact)) &&
-          (this.selectedFilters.location.length === 0 || this.selectedFilters.location.includes(newsItem.location))
-        );
-      });
+    },
+    methods: {
+        getStatsIcon(key) {
+            const icons = {
+                'Active Threats': 'fas fa-exclamation-triangle',
+                'Resolved Incidents': 'fas fa-check-circle',
+                'Pending Alerts': 'fas fa-clock'
+            };
+            return icons[key] || 'fas fa-info-circle';
+        },
+        async fetchNews() {
+            const response = await fetch('http://localhost:5001/api/news');
+            this.news = await response.json();
+        },
+        async fetchAttackTypes() {
+            const response = await fetch('http://localhost:5001/api/attack-types');
+            this.attackTypes = await response.json();
+        },
+        async fetchImpactLevels() {
+            const response = await fetch('http://localhost:5001/api/impact-levels');
+            this.impactLevels = await response.json();
+        },
+        async fetchLocations() {
+            const response = await fetch('http://localhost:5001/api/locations');
+            this.locations = await response.json();
+        },
+        async fetchCurrentStats() {
+            const response = await fetch('http://localhost:5001/api/current-stats');
+            this.currentStats = await response.json();
+        }
+    },
+    async created() {
+        try {
+            await Promise.all([
+                this.fetchNews(),
+                this.fetchAttackTypes(),
+                this.fetchImpactLevels(),
+                this.fetchLocations(),
+                this.fetchCurrentStats()
+            ]);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     }
-  },
-  methods: {
-    getStatsIcon(key) {
-      const icons = {
-        'Active Threats': 'fas fa-exclamation-triangle',
-        'Resolved Incidents': 'fas fa-check-circle',
-        'Pending Alerts': 'fas fa-clock'
-      };
-      return icons[key] || 'fas fa-info-circle';
-    }
-  }
 };
 </script>
 

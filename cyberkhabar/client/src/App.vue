@@ -30,6 +30,7 @@
             <font-awesome-icon :icon="['fas', 'file-alt']"
               class="text-slate-200 text-lg" />
           </button>
+          
         </div>
       </aside>
 

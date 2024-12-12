@@ -111,37 +111,10 @@
 export default {
     data() {
         return {
-            incidents: [
-                { title: 'Ransomware Attack', sector: 'Affected Sector: Healthcare', severity: 'High' },
-                { title: 'Data Breach', sector: 'Affected Sector: Finance', severity: 'Medium' },
-                { title: 'DDoS Attack', sector: 'Affected Sector: Government', severity: 'Low' },
-                { title: 'Phishing Campaign', sector: 'Affected Sector: Education', severity: 'Medium' },
-                { title: 'Malware Infection', sector: 'Affected Sector: Retail', severity: 'High' }
-            ],
-            threats: [
-                {
-                    title: 'Ransomware Threat',
-                    description: 'Increased activity of ransomware targeting the healthcare sector. Recommended actions for CII operators.'
-                },
-                {
-                    title: 'IoT Botnet Attacks',
-                    description: 'Emerging threat of IoT botnets targeting critical infrastructure. Mitigation strategies for CII operators.'
-                },
-                {
-                    title: 'Supply Chain Vulnerabilities',
-                    description: 'Increased exploitation of supply chain vulnerabilities. Guidance for CII operators on third-party risk management.'
-                }
-            ],
-            reports: [
-                { title: 'Quarterly Cyber Incident Report', date: 'Q2 2023 | Published: June 30, 2023' },
-                { title: 'Sector-Specific Incident Report', date: 'Banking and Finance | Published: May 15, 2023' },
-                { title: 'Critical Infrastructure Incident Report', date: 'Energy Sector | Published: April 1, 2023' }
-            ],
-            alerts: [
-                { title: 'Ransomware Alert', date: 'June 28, 2023', severity: 'High' },
-                { title: 'DDoS Attack Alert', date: 'June 15, 2023', severity: 'Medium' },
-                { title: 'IoT Botnet Alert', date: 'June 5, 2023', severity: 'Low' }
-            ]
+            incidents: [],
+            threats: [],
+            reports: [],
+            alerts: []
         };
     },
     methods: {
@@ -152,10 +125,39 @@ export default {
                 Low: 'bg-yellow-500/20 text-yellow-400'
             };
             return classes[severity] || '';
+        },
+        async fetchIncidents() {
+            const response = await fetch('http://localhost:5001/api/incidents');
+            this.incidents = await response.json();
+        },
+        async fetchThreats() {
+            const response = await fetch('http://localhost:5001/api/threats');
+            this.threats = await response.json();
+        },
+        async fetchReports() {
+            const response = await fetch('http://localhost:5001/api/reports');
+            this.reports = await response.json();
+        },
+        async fetchAlerts() {
+            const response = await fetch('http://localhost:5001/api/alerts');
+            this.alerts = await response.json();
+        }
+    },
+    async created() {
+        try {
+            await Promise.all([
+                this.fetchIncidents(),
+                this.fetchThreats(),
+                this.fetchReports(),
+                this.fetchAlerts()
+            ]);
+        } catch (error) {
+            console.error('Error fetching data:', error);
         }
     }
 };
 </script>
+
 
 <style scoped>
 /* Add your custom styles here */

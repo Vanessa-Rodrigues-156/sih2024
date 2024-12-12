@@ -23,6 +23,34 @@ driver = GraphDatabase.driver(
 )
 
 # Models
+
+class Report(BaseModel):
+    id: str
+    title: str
+    content: str
+    timestamp: datetime
+
+class NewsHeadline(BaseModel):
+    id: str
+    title: str
+    content: str
+    date: str
+
+class AttackType(BaseModel):
+    type: str
+
+class ImpactLevel(BaseModel):
+    level: str
+
+class Location(BaseModel):
+    location: str
+
+class CurrentStats(BaseModel):
+    active_threats: int
+    resolved_incidents: int
+    pending_alerts: int
+    related_incidents: int
+
 class Incident(BaseModel):
     title: str
     severity: str
@@ -35,7 +63,106 @@ class Alert(BaseModel):
     message: str
     timestamp: datetime
 
+class User(BaseModel):
+    username: str
+    password: str
+
+class Report(BaseModel):
+    title: str
+    content: str
+    timestamp: datetime
+class NewsHeadline(BaseModel):
+    id: str
+    title: str
+    content: str
+    date: str
+
 # Routes
+@app.get("/api/nodes/News", response_model=List[NewsHeadline])
+async def get_news_headlines():
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (n:News)
+            RETURN n.id as id, n.title as title, n.content as content, n.date as date
+        """)
+        news_headlines = [NewsHeadline(id=record["id"], title=record["title"], content=record["content"], date=record["date"]) for record in result]
+        return news_headlines
+@app.get("/api/news", response_model=List[NewsHeadline])
+async def get_news_headlines():
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (n:News)
+            RETURN n.id as id, n.title as title, n.content as content, n.date as date
+        """)
+        news_headlines = [NewsHeadline(id=record["id"], title=record["title"], content=record["content"], date=record["date"]) for record in result]
+        return news_headlines
+
+@app.get("/api/attack-types", response_model=List[AttackType])
+async def get_attack_types():
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (a:AttackType)
+            RETURN a.type as type
+        """)
+        attack_types = [AttackType(type=record["type"]) for record in result]
+        return attack_types
+
+@app.get("/api/impact-levels", response_model=List[ImpactLevel])
+async def get_impact_levels():
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (i:ImpactLevel)
+            RETURN i.level as level
+        """)
+        impact_levels = [ImpactLevel(level=record["level"]) for record in result]
+        return impact_levels
+
+@app.get("/api/locations", response_model=List[Location])
+async def get_locations():
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (l:Location)
+            RETURN l.location as location
+        """)
+        locations = [Location(location=record["location"]) for record in result]
+        return locations
+
+@app.get("/api/current-stats", response_model=CurrentStats)
+async def get_current_stats():
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (s:Stats)
+            RETURN s.active_threats as active_threats, s.resolved_incidents as resolved_incidents, s.pending_alerts as pending_alerts, s.related_incidents as related_incidents
+        """)
+        stats = result.single()
+        if stats:
+            return CurrentStats(
+                active_threats=stats["active_threats"],
+                resolved_incidents=stats["resolved_incidents"],
+                pending_alerts=stats["pending_alerts"],
+                related_incidents=stats["related_incidents"]
+            )
+        else:
+            raise HTTPException(status_code=404, detail="Stats not found")
+
+@app.get("/api/reports/{report_id}", response_model=Report)
+async def get_report(report_id: str):
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (r:Report {id: $id})
+            RETURN r.id as id, r.title as title, r.content as content, r.timestamp as timestamp
+        """, id=report_id)
+        record = result.single()
+        if record:
+            return Report(
+                id=record["id"],
+                title=record["title"],
+                content=record["content"],
+                timestamp=datetime.fromisoformat(record["timestamp"])
+            )
+        else:
+            raise HTTPException(status_code=404, detail="Report not found")
+ 
 @app.get("/dashboard/stats")
 async def get_dashboard_stats():
     with driver.session() as session:
@@ -108,6 +235,63 @@ async def get_alerts():
             LIMIT 5
         """)
         return [dict(record["a"]) for record in result]
+
+@app.post("/login")
+async def login(user: User):
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (u:User {username: $username, password: $password})
+            RETURN u
+        """, user.dict())
+        user_data = result.single()
+        if not user_data:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        return dict(user_data["u"])
+
+@app.get("/reports")
+async def get_reports():
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (r:Report)
+            RETURN r
+            ORDER BY r.timestamp DESC
+        """)
+        return [dict(record["r"]) for record in result]
+
+@app.post("/reports")
+async def create_report(report: Report):
+    with driver.session() as session:
+        result = session.run("""
+            CREATE (r:Report {
+                title: $title,
+                content: $content,
+                timestamp: $timestamp
+            })
+            RETURN r
+        """, report.dict())
+        return dict(result.single()["r"])
+
+@app.get("/analytics")
+async def get_analytics():
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (i:Incident)
+            RETURN i.sector as sector, count(i) as count
+            ORDER BY count DESC
+        """)
+        return [dict(record) for record in result]
+
+@app.get("/profile/{username}")
+async def get_user_profile(username: str):
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (u:User {username: $username})
+            RETURN u
+        """, {"username": username})
+        user_data = result.single()
+        if not user_data:
+            raise HTTPException(status_code=404, detail="User not found")
+        return dict(user_data["u"])
 
 if __name__ == "__main__":
     import uvicorn
