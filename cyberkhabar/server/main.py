@@ -16,13 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Connect to Neo4j
-driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck"), database= "incident")
+# Neo4j connection
+URI = "neo4j://localhost:7687"
+AUTH = ("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck")  # Replace with your credentials
+DATABASE = "incident"
 
-if not driver.verify_connectivity():
-    print("Failed to connect to the database.") 
-else :
-    print("success")
+def get_db():
+    return GraphDatabase.driver(URI, auth=AUTH, database=DATABASE)
+
 # Models
 class Incident(BaseModel):
     id: str
@@ -45,6 +46,7 @@ class Alert(BaseModel):
     id: str
     message: str
     date: datetime
+
 class Location(BaseModel):
     location: str
 
@@ -57,6 +59,7 @@ class CurrentStats(BaseModel):
 class User(BaseModel):
     username: str
     password: str
+
 class NewsHeadline(BaseModel):
     id: str
     title: str
@@ -66,7 +69,7 @@ class NewsHeadline(BaseModel):
 # Routes
 @app.get("/api/incidents", response_model=List[Incident])
 async def get_incidents():
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (i:Incident)
             RETURN i.id as id, i.title as title, i.description as description, i.date as date
@@ -76,7 +79,7 @@ async def get_incidents():
 
 @app.get("/api/threats", response_model=List[Threat])
 async def get_threats():
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (t:Threat)
             RETURN t.id as id, t.name as name, t.description as description
@@ -86,7 +89,7 @@ async def get_threats():
 
 @app.get("/api/reports", response_model=List[Report])
 async def get_reports():
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (r:Report)
             RETURN r.id as id, r.title as title, r.content as content, r.timestamp as timestamp
@@ -96,7 +99,7 @@ async def get_reports():
 
 @app.get("/api/alerts", response_model=List[Alert])
 async def get_alerts():
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (a:Alert)
             RETURN a.id as id, a.message as message, a.date as date
@@ -106,7 +109,7 @@ async def get_alerts():
 
 @app.get("/api/reports/{report_id}", response_model=Report)
 async def get_report(report_id: str):
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (r:Report {id: $id})
             RETURN r.id as id, r.title as title, r.content as content, r.timestamp as timestamp
@@ -121,10 +124,87 @@ async def get_report(report_id: str):
             )
         else:
             raise HTTPException(status_code=404, detail="Report not found")
- 
+
+@app.get("/api/news", response_model=List[NewsHeadline])
+async def get_news():
+    with get_db().session() as session:
+        result = session.run("""
+            MATCH (n:News)
+            RETURN n.id as id, n.title as title, n.content as content, n.date as date
+        """)
+        news = [NewsHeadline(id=record["id"], title=record["title"], content=record["content"], date=record["date"]) for record in result]
+        return news
+
+@app.get("/api/attack-types", response_model=List[str])
+async def get_attack_types():
+    with get_db().session() as session:
+        result = session.run("""
+            MATCH (a:AttackType)
+            RETURN DISTINCT a.name
+            ORDER BY a.name
+        """)
+        return [record["a.name"] for record in result]
+
+@app.get("/api/impact-levels", response_model=List[str])
+async def get_impact_levels():
+    with get_db().session() as session:
+        result = session.run("""
+            MATCH (i:Impact)
+            RETURN DISTINCT i.level
+            ORDER BY i.level
+        """)
+        return [record["i.level"] for record in result]
+
+@app.get("/api/locations", response_model=List[str])
+async def get_locations():
+    with get_db().session() as session:
+        result = session.run("""
+            MATCH (l:Location)
+            RETURN DISTINCT l.name
+            ORDER BY l.name
+        """)
+        return [record["l.name"] for record in result]
+
+@app.get("/api/current-stats", response_model=CurrentStats)
+async def get_current_stats():
+    with get_db().session() as session:
+        # Get active threats count
+        active_threats = session.run("""
+            MATCH (t:Threat)
+            WHERE t.status = 'active'
+            RETURN count(t) as count
+        """).single()["count"]
+
+        # Get resolved incidents count
+        resolved_incidents = session.run("""
+            MATCH (i:Incident)
+            WHERE i.status = 'resolved'
+            RETURN count(i) as count
+        """).single()["count"]
+
+        # Get pending alerts count
+        pending_alerts = session.run("""
+            MATCH (a:Alert)
+            WHERE a.status = 'pending'
+            RETURN count(a) as count
+        """).single()["count"]
+
+        # Get total related incidents
+        related_incidents = session.run("""
+            MATCH (i:Incident)
+            RETURN count(i) as count
+        """).single()["count"]
+
+        return {
+            "active_threats": active_threats,
+            "resolved_incidents": resolved_incidents,
+            "pending_alerts": pending_alerts,
+            "related_incidents": related_incidents
+        }
+
 @app.get("/dashboard/stats")
 async def get_dashboard_stats():
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (i:Incident)
             RETURN count(i) as total_incidents,
@@ -142,7 +222,7 @@ async def get_dashboard_stats():
 
 @app.get("/dashboard/chart")
 async def get_chart_data():
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (i:Incident)
             WHERE i.timestamp >= datetime() - duration('P1D')
@@ -160,7 +240,7 @@ async def get_chart_data():
 
 @app.get("/incidents/recent")
 async def get_recent_incidents():
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (i:Incident)
             RETURN i
@@ -171,7 +251,7 @@ async def get_recent_incidents():
 
 @app.post("/incidents")
 async def create_incident(incident: Incident):
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             CREATE (i:Incident {
                 title: $title,
@@ -184,20 +264,9 @@ async def create_incident(incident: Incident):
         """, incident.dict())
         return dict(result.single()["i"])
 
-@app.get("/alerts")
-async def get_alerts():
-    with driver.session() as session:
-        result = session.run("""
-            MATCH (a:Alert)
-            RETURN a
-            ORDER BY a.timestamp DESC
-            LIMIT 5
-        """)
-        return [dict(record["a"]) for record in result]
-
 @app.post("/login")
 async def login(user: User):
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (u:User {username: $username, password: $password})
             RETURN u
@@ -207,32 +276,9 @@ async def login(user: User):
             raise HTTPException(status_code=401, detail="Invalid credentials")
         return dict(user_data["u"])
 
-@app.get("/reports")
-async def get_reports():
-    with driver.session() as session:
-        result = session.run("""
-            MATCH (r:Report)
-            RETURN r
-            ORDER BY r.timestamp DESC
-        """)
-        return [dict(record["r"]) for record in result]
-
-@app.post("/reports")
-async def create_report(report: Report):
-    with driver.session() as session:
-        result = session.run("""
-            CREATE (r:Report {
-                title: $title,
-                content: $content,
-                timestamp: $timestamp
-            })
-            RETURN r
-        """, report.dict())
-        return dict(result.single()["r"])
-
 @app.get("/analytics")
 async def get_analytics():
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (i:Incident)
             RETURN i.sector as sector, count(i) as count
@@ -242,7 +288,7 @@ async def get_analytics():
 
 @app.get("/profile/{username}")
 async def get_user_profile(username: str):
-    with driver.session() as session:
+    with get_db().session() as session:
         result = session.run("""
             MATCH (u:User {username: $username})
             RETURN u
