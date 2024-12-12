@@ -14,9 +14,9 @@ app.add_middleware(
 )
 
 # Neo4j connection
-URI = "neo4j://localhost:7687"
+URI = "bolt://localhost:7687"
 AUTH = ("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck")  # Replace with your credentials
-DATABASE = "incident"
+DATABASE = "Neo4j"
 
 def get_db():
     return GraphDatabase.driver(URI, auth=AUTH, database=DATABASE)
@@ -107,5 +107,5 @@ async def get_current_stats():
         }
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5001)
+    import uvicorn # type: ignore
+    uvicorn.run(app, host="localhost", port=5001)

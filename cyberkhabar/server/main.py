@@ -17,9 +17,9 @@ app.add_middleware(
 )
 
 # Neo4j connection
-URI = "neo4j://localhost:7687"
-AUTH = ("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck")  # Replace with your credentials
-DATABASE = "incident"
+URI = "bolt://localhost:7687"
+AUTH = ("neo4j", "QWERTYUIOP0")  # Replace with your credentials
+DATABASE = "Neo4j"
 
 
 def get_db():
@@ -84,7 +84,6 @@ async def get_incidents():
             RETURN i.id as id, i.title as title, i.description as description, i.date as date
         """)
         incidents = [Incident(id=record["id"], title=record["title"], description=record["description"], date=record["date"]) for record in result]
-       # incidents=[Incident(id=[1,2,3],title=["Ransome ware ","databreach","DDoS"],description=["healthcare data affected","finance sector affected","goverenment sector affected"], date=["21-20-23","31-11-23","30-12-21"])]
         return incidents
 
 @app.get("/api/threats", response_model=List[Threat])
