@@ -90,8 +90,6 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import { incidentService } from '../api/incidents';
-import { dashboardService } from '../api/dashboard';
 
 const chartData = ref({});
 const incidents = ref([]);
@@ -100,12 +98,21 @@ const stats = ref({});
 
 const fetchData = async () => {
   try {
-    const [dashboardStats, chartData, recentIncidents, alerts] = await Promise.all([
-      dashboardService.getDashboardStats(),
-      dashboardService.getChartData(),
-      incidentService.getRecentIncidents(),
-      dashboardService.getAlerts()
+    const [dashboardStatsResponse, chartDataResponse, recentIncidentsResponse, alertsResponse] = await Promise.all([
+      fetch('http://localhost:8000/api/dashboard/stats'),
+      fetch('http://localhost:8000/api/dashboard/chart-data'),
+      fetch('http://localhost:8000/api/incidents/recent'),
+      fetch('http://localhost:8000/api/alerts')
     ]);
+
+    if (!dashboardStatsResponse.ok || !chartDataResponse.ok || !recentIncidentsResponse.ok || !alertsResponse.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const dashboardStats = await dashboardStatsResponse.json();
+    const chartData = await chartDataResponse.json();
+    const recentIncidents = await recentIncidentsResponse.json();
+    const alerts = await alertsResponse.json();
 
     stats.value = dashboardStats;
     chartData.value = chartData;
@@ -127,8 +134,23 @@ onBeforeUnmount(() => {
 });
 
 const handleNewIncident = async (incidentData) => {
-  await incidentService.createIncident(incidentData);
-  await fetchData();
+  try {
+    const response = await fetch('http://localhost:8000/api/incidents', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(incidentData)
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    await fetchData();
+  } catch (error) {
+    console.error('Error creating new incident:', error);
+  }
 };
 </script>
 
