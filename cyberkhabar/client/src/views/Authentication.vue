@@ -79,7 +79,7 @@ export default {
   name: 'Authentication',
   data() {
     return {
-      showLogin: true, // Determines whether to show login or signup form
+      showLogin: true, 
       signupUsername: '',
       signupPassword: '',
       loginUsername: '',
