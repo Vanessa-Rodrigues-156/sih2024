@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+<<<<<<< HEAD
     <div class="min-h-screen w-full bg-gray-900 flex">
       <!-- Sidebar -->
       <aside class="bg-gray-800 w-20 py-4 flex flex-col justify-between items-center">
@@ -11,6 +12,11 @@
             class="w-12 h-12 flex items-center justify-center rounded-md transition-all">
             <font-awesome-icon :icon="['fas', 'home']" class="text-gray-200 text-lg" />
           </button>
+=======
+    <router-view > <!-- This will render the appropriate component based on the route -->
+    <div class="min-h-screen w-full bg-slate-900 flex">
+      <!-- Check if loggedIn is true, then show the Sidebar and Main Content -->
+>>>>>>> d0e14a854e2da742f130d2529cf22daf1aafaf66
 
           <!-- Dashboard Button -->
           <button
@@ -43,6 +49,7 @@
         <component :is="currentViewComponent" />
       </div>
     </div>
+    </router-view>
   </div>
 </template>
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from neo4j import GraphDatabase
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
 import json
 import uvicorn
 
@@ -43,17 +43,55 @@ class Incident(BaseModel):
     tlp_classification: str
 
 # Define your API endpoints
-@app.post("/api/incidents")
-async def create_incident(incident: Incident):
-    with get_db().session() as session:
-         result = session.run("MATCH (i:Incident) RETURN i")
-         incidents= [record["i"] for record in result]
+@app.get("/api/incidents")
+async def readdata():
+    data={
+        "attackTypes": ["Ransomware", "Phishing", "DDoS", "Malware"],
+        "impactLevels": ["High", "Medium", "Low"],
+        "locations": ["North America", "Europe", "Asia"],
+        "selectedFilters": {
+        "type": [],
+        "impact": [],
+        "location": [],
+        "recency": "7"
+        },
+        "news": [
+        {
+            "id": 1,
+            "title": "Ransomware Attack on Healthcare",
+            "description": "A major ransomware attack has affected healthcare facilities...",
+            
+        },
+        {
+            "id": 2,
+            "title": "Phishing Campaign Targets Banks",
+            "description": "A new phishing campaign is targeting major banks...",
+           
+        },
+        {
+            "id": 3,
+            "title": "DDoS Attack on Government Websites",
+            "description": "Government websites have been hit by a DDoS attack...",
          
+        }
+        ],
+        "currentStats": {
+        "Active Threats": 5,
+        "Resolved Incidents": 12,
+        "Pending Alerts": 3,
+        "relatedIncidents": 20
+        }
+        }
+    return data   
 
+    
+    
 class SignupRequest(BaseModel):
     username: str
     password: str
     email: str
+
+
 
 @app.post("/api/auth/signup")
 async def signup(request: SignupRequest):
