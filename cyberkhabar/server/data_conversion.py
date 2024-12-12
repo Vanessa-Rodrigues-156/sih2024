@@ -3,7 +3,7 @@ from neo4j import GraphDatabase
 
 # Neo4j connection configuration
 URI = "bolt://localhost:7687"
-AUTH = ("neo4j", "your_password")  # Replace with your credentials
+AUTH = ("neo4j", "QWERTYUIOP0")  # Replace with your credentials
 
 def get_db():
     return GraphDatabase.driver(URI, auth=AUTH)

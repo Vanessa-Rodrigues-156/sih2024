@@ -91,7 +91,6 @@
             </h2>
             <div>
               <div v-for="news in filteredNews" :key="news.id" class="bg-slate-700 rounded-lg overflow-hidden hover:-translate-y-1 transition-transform mb-4">
-                <img :src="news.image" :alt="news.title" class="w-full h-36 object-cover" />
                 <div class="p-4">
                   <h3 class="text-slate-100 font-medium mb-2">{{ news.title }}</h3>
                   <p class="text-slate-400 mb-4">{{ news.description }}</p>

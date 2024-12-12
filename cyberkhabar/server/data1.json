@@ -1,0 +1,137 @@
+[
+    {
+        "incident_name": "Phishing Attack on Finance Department",
+        "date_of_incident": "2024-01-15",
+        "severity_level": "High",
+        "affected_systems": ["Email Server", "Financial Software"],
+        "threat_vector": "Email",
+        "threat_actor": "Cybercriminal Group XYZ",
+        "mitre_attck_mapping": ["T1566.001 - Spearphishing Attachment", "T1078 - Valid Accounts"],
+        "iocs": {
+            "malicious_urls": ["http://malicious.example.com/phishing"],
+            "malicious_ips": ["192.0.2.1"],
+            "file_hashes": ["d41d8cd98f00b204e9800998ecf8427e"]
+        },
+        "data_impacted": ["Employee Credentials", "Financial Records"],
+        "financial_operational_impact": "Estimated loss of $500,000 due to fraud and remediation costs.",
+        "response_actions_taken": [
+            "Isolated affected email accounts.",
+            "Reset passwords for all impacted users.",
+            "Implemented additional email filtering rules."
+        ],
+        "recommended_mitigation": [
+            "Conduct regular phishing awareness training.",
+            "Deploy multi-factor authentication (MFA).",
+            "Enhance email security gateways."
+        ],
+        "tlp_classification": "TLP:AMBER"
+    },
+    {
+        "incident_name": "Ransomware Attack on Healthcare Provider",
+        "date_of_incident": "2024-03-22",
+        "severity_level": "Critical",
+        "affected_systems": ["Patient Management System", "Email Server", "File Servers"],
+        "threat_vector": "Remote Desktop Protocol (RDP) Brute Force",
+        "threat_actor": "Ransomware Group ABC",
+        "mitre_attck_mapping": ["T1110.001 - Brute Force: Password Guessing", "T1486 - Data Encrypted for Impact"],
+        "iocs": {
+            "malicious_domains": ["ransomware.example.net"],
+            "malicious_ips": ["198.51.100.2"],
+            "file_hashes": ["e99a18c428cb38d5f260853678922e03"]
+        },
+        "data_impacted": ["Patient Records", "Financial Data"],
+        "financial_operational_impact": "Disruption of services leading to estimated losses of $2,000,000.",
+        "response_actions_taken": [
+            "Disconnected affected systems from the network.",
+            "Engaged incident response team.",
+            "Restored data from backups."
+        ],
+        "recommended_mitigation": [
+            "Restrict RDP access using VPNs and firewalls.",
+            "Regularly update and patch systems.",
+            "Implement comprehensive backup solutions."
+        ],
+        "tlp_classification": "TLP:RED"
+    },
+    {
+        "incident_name": "Data Breach via SQL Injection",
+        "date_of_incident": "2024-05-10",
+        "severity_level": "Medium",
+        "affected_systems": ["Web Application", "Database Server"],
+        "threat_vector": "SQL Injection",
+        "threat_actor": "Script Kiddies",
+        "mitre_attck_mapping": ["T1190 - Exploit Public-Facing Application", "T1059.003 - SQL Commands"],
+        "iocs": {
+            "malicious_urls": ["http://vulnerable.example.com/login?user=' OR '1'='1"],
+            "malicious_ips": ["203.0.113.5"],
+            "file_hashes": []
+        },
+        "data_impacted": ["User Information", "Transaction Records"],
+        "financial_operational_impact": "Potential fines and reputational damage estimated at $300,000.",
+        "response_actions_taken": [
+            "Patched SQL injection vulnerability.",
+            "Conducted security audit of web applications.",
+            "Notified affected users."
+        ],
+        "recommended_mitigation": [
+            "Implement input validation and parameterized queries.",
+            "Regularly perform security testing.",
+            "Use Web Application Firewalls (WAF)."
+        ],
+        "tlp_classification": "TLP:GREEN"
+    },
+    {
+        "incident_name": "Insider Threat - Data Exfiltration",
+        "date_of_incident": "2024-07-08",
+        "severity_level": "High",
+        "affected_systems": ["Internal File Shares", "Email Server"],
+        "threat_vector": "Authorized Access Misuse",
+        "threat_actor": "Disgruntled Employee",
+        "mitre_attck_mapping": ["T1078 - Valid Accounts", "T1036 - Masquerading"],
+        "iocs": {
+            "malicious_domains": [],
+            "malicious_ips": [],
+            "file_hashes": []
+        },
+        "data_impacted": ["Proprietary Research", "Client Data"],
+        "financial_operational_impact": "Loss of intellectual property valued at $1,000,000 and client trust.",
+        "response_actions_taken": [
+            "Terminated employee's access immediately.",
+            "Conducted forensic analysis.",
+            "Enhanced monitoring of sensitive data access."
+        ],
+        "recommended_mitigation": [
+            "Implement least privilege access controls.",
+            "Monitor and log access to sensitive data.",
+            "Conduct regular employee training on data security."
+        ],
+        "tlp_classification": "TLP:AMBER"
+    },
+    {
+        "incident_name": "Distributed Denial of Service (DDoS) Attack",
+        "date_of_incident": "2024-09-30",
+        "severity_level": "Medium",
+        "affected_systems": ["Public-Facing Website", "API Endpoints"],
+        "threat_vector": "Botnet Traffic Flood",
+        "threat_actor": "Anonymous Hackers",
+        "mitre_attck_mapping": ["T1498 - Network Denial of Service", "T1499 - Endpoint Denial of Service"],
+        "iocs": {
+            "malicious_domains": ["botnet.example.org"],
+            "malicious_ips": ["192.0.2.100", "192.0.2.101"],
+            "file_hashes": []
+        },
+        "data_impacted": ["Service Availability"],
+        "financial_operational_impact": "Temporary service outage resulting in estimated revenue loss of $100,000.",
+        "response_actions_taken": [
+            "Activated DDoS mitigation services.",
+            "Routed traffic through content delivery networks (CDNs).",
+            "Implemented rate limiting."
+        ],
+        "recommended_mitigation": [
+            "Subscribe to DDoS protection services.",
+            "Implement scalable infrastructure.",
+            "Monitor network traffic for anomalies."
+        ],
+        "tlp_classification": "TLP:GREEN"
+    }
+]
