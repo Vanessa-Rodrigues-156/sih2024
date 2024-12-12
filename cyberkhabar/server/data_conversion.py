@@ -31,7 +31,7 @@ def import_incidents(incidents):
 
 def main():
     # Replace this with the path to your JSON file
-    json_file_path = "path/to/your/json/file.json"
+    json_file_path = "data.json"
 
     try:
         with open(json_file_path, "r") as file:

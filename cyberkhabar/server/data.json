@@ -1,4 +1,4 @@
-data:{
+[
  {
     "Incident Name": "Cosmos Bank Cyber Attack",
     "Date of Incident": "August 2018",
@@ -193,5 +193,5 @@ data:{
     "Response Actions Taken": "Forensic investigation, system isolation, collaboration with cybersecurity experts",
     "Recommended Mitigation": "Enhanced monitoring, multi-factor authentication, regular security audits",
     "TLP Classification": "RED"
-},
 }
+]
