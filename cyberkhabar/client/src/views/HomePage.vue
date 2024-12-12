@@ -192,19 +192,19 @@ export default {
   
     },
     async fetchAttackTypes() {
-      const response = await fetch('http://localhost:5001/api/attack-types');
+      const response = await fetch('/api/attack-types');
       this.attackTypes = await response.json();
     },
     async fetchImpactLevels() {
-      const response = await fetch('http://localhost:5001/api/impact-levels');
+      const response = await fetch('/api/impact-levels');
       this.impactLevels = await response.json();
     },
     async fetchLocations() {
-      const response = await fetch('http://localhost:5001/api/locations');
+      const response = await fetch('/api/locations');
       this.locations = await response.json();
     },
     async fetchCurrentStats() {
-      const response = await fetch('http://localhost:5001/api/current-stats');
+      const response = await fetch('/api/current-stats');
       this.currentStats = await response.json();
     },
   },
