@@ -17,13 +17,23 @@ app.add_middleware(
 )
 
 # Connect to Neo4j
-driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck"))
+driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "CPAT5OChnHp6cXhaHmyzitohnQsGh6ucx4b7b13jwck"), database= "incident")
 
 if not driver.verify_connectivity():
     print("Failed to connect to the database.") 
 else :
     print("success")
 # Models
+class Incident(BaseModel):
+    id: str
+    title: str
+    description: str
+    date: datetime
+
+class Threat(BaseModel):
+    id: str
+    name: str
+    description: str
 
 class Report(BaseModel):
     id: str
@@ -31,18 +41,10 @@ class Report(BaseModel):
     content: str
     timestamp: datetime
 
-class NewsHeadline(BaseModel):
+class Alert(BaseModel):
     id: str
-    title: str
-    content: str
-    date: str
-
-class AttackType(BaseModel):
-    type: str
-
-class ImpactLevel(BaseModel):
-    level: str
-
+    message: str
+    date: datetime
 class Location(BaseModel):
     location: str
 
@@ -52,26 +54,9 @@ class CurrentStats(BaseModel):
     pending_alerts: int
     related_incidents: int
 
-class Incident(BaseModel):
-    title: str
-    severity: str
-    sector: str
-    description: str
-    timestamp: datetime
-
-class Alert(BaseModel):
-    name: str
-    message: str
-    timestamp: datetime
-
 class User(BaseModel):
     username: str
     password: str
-
-class Report(BaseModel):
-    title: str
-    content: str
-    timestamp: datetime
 class NewsHeadline(BaseModel):
     id: str
     title: str
@@ -79,72 +64,45 @@ class NewsHeadline(BaseModel):
     date: str
 
 # Routes
-@app.get("/api/nodes/News", response_model=List[NewsHeadline])
-async def get_news_headlines():
+@app.get("/api/incidents", response_model=List[Incident])
+async def get_incidents():
     with driver.session() as session:
         result = session.run("""
-            MATCH (n:News)
-            RETURN n.id as id, n.title as title, n.content as content, n.date as date
+            MATCH (i:Incident)
+            RETURN i.id as id, i.title as title, i.description as description, i.date as date
         """)
-        news_headlines = [NewsHeadline(id=record["id"], title=record["title"], content=record["content"], date=record["date"]) for record in result]
-        return news_headlines
-@app.get("/api/news", response_model=List[NewsHeadline])
-async def get_news_headlines():
-    with driver.session() as session:
-        result = session.run("""
-            MATCH (n:News)
-            RETURN n.id as id, n.title as title, n.content as content, n.date as date
-        """)
-        news_headlines = [NewsHeadline(id=record["id"], title=record["title"], content=record["content"], date=record["date"]) for record in result]
-        return news_headlines
+        incidents = [Incident(id=record["id"], title=record["title"], description=record["description"], date=record["date"]) for record in result]
+        return incidents
 
-@app.get("/api/attack-types", response_model=List[AttackType])
-async def get_attack_types():
+@app.get("/api/threats", response_model=List[Threat])
+async def get_threats():
     with driver.session() as session:
         result = session.run("""
-            MATCH (a:AttackType)
-            RETURN a.type as type
+            MATCH (t:Threat)
+            RETURN t.id as id, t.name as name, t.description as description
         """)
-        attack_types = [AttackType(type=record["type"]) for record in result]
-        return attack_types
+        threats = [Threat(id=record["id"], name=record["name"], description=record["description"]) for record in result]
+        return threats
 
-@app.get("/api/impact-levels", response_model=List[ImpactLevel])
-async def get_impact_levels():
+@app.get("/api/reports", response_model=List[Report])
+async def get_reports():
     with driver.session() as session:
         result = session.run("""
-            MATCH (i:ImpactLevel)
-            RETURN i.level as level
+            MATCH (r:Report)
+            RETURN r.id as id, r.title as title, r.content as content, r.timestamp as timestamp
         """)
-        impact_levels = [ImpactLevel(level=record["level"]) for record in result]
-        return impact_levels
+        reports = [Report(id=record["id"], title=record["title"], content=record["content"], timestamp=record["timestamp"]) for record in result]
+        return reports
 
-@app.get("/api/locations", response_model=List[Location])
-async def get_locations():
+@app.get("/api/alerts", response_model=List[Alert])
+async def get_alerts():
     with driver.session() as session:
         result = session.run("""
-            MATCH (l:Location)
-            RETURN l.location as location
+            MATCH (a:Alert)
+            RETURN a.id as id, a.message as message, a.date as date
         """)
-        locations = [Location(location=record["location"]) for record in result]
-        return locations
-
-@app.get("/api/current-stats", response_model=CurrentStats)
-async def get_current_stats():
-    with driver.session() as session:
-        result = session.run("""
-            MATCH (s:Stats)
-            RETURN s.active_threats as active_threats, s.resolved_incidents as resolved_incidents, s.pending_alerts as pending_alerts, s.related_incidents as related_incidents
-        """)
-        stats = result.single()
-        if stats:
-            return CurrentStats(
-                active_threats=stats["active_threats"],
-                resolved_incidents=stats["resolved_incidents"],
-                pending_alerts=stats["pending_alerts"],
-                related_incidents=stats["related_incidents"]
-            )
-        else:
-            raise HTTPException(status_code=404, detail="Stats not found")
+        alerts = [Alert(id=record["id"], message=record["message"], date=record["date"]) for record in result]
+        return alerts
 
 @app.get("/api/reports/{report_id}", response_model=Report)
 async def get_report(report_id: str):
