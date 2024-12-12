@@ -25,8 +25,7 @@
           </div>
           <button
             type="submit"
-
-            class="w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none"
+            class="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none"
           >
             Login
           </button>
@@ -77,6 +76,7 @@
 
 <script>
 export default {
+  name: 'Authentication',
   data() {
     return {
       showLogin: true, // Determines whether to show login or signup form
@@ -133,6 +133,8 @@ export default {
           // Reset the login form fields
           this.loginUsername = '';
           this.loginPassword = '';
+          //after login go to homepage 
+          this.$router.push('/home');
         } else {
           window.alert('Invalid credentials. Please try again.');
         }
