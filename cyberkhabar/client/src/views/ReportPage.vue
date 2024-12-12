@@ -13,7 +13,6 @@
                 Back to Dashboard
             </router-link>
         </div>
-
         <!-- Report Content -->
 
         <div class="container mx-auto px-6 py-8">
