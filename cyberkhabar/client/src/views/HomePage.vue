@@ -7,7 +7,7 @@
           <h1 class="text-3xl font-bold text-blue-400">CyberKhabar</h1>
         </div>
         <div class="flex gap-4">
-          <button class="px-4 py-2 text-blue-400 border border-blue-400 rounded-md hover:bg-blue-400/10 transition-all">
+          <button @click="reloadPage"  class="px-4 py-2 text-blue-400 border border-blue-400 rounded-md hover:bg-blue-400/10 transition-all">
             Reload
           </button>
         </div>
@@ -172,6 +172,10 @@ export default {
     },
   },
   methods: {
+    reloadPage() {
+      alert("The page is reloaded");
+      window.location.reload();
+    },
     getStatsIcon(key) {
       const icons = {
         'Active Threats': 'fas fa-exclamation-triangle',
@@ -181,8 +185,11 @@ export default {
       return icons[key] || 'fas fa-info-circle';
     },
     async fetchNews() {
-      const response = await fetch('http://localhost:5001/api/news');
+      const response = await fetch('/api/incidents');
       this.news = await response.json();
+      if (this.news!=null)
+       console.log("the response is stored")
+  
     },
     async fetchAttackTypes() {
       const response = await fetch('http://localhost:5001/api/attack-types');

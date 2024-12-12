@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view /> <!-- This will render the appropriate component based on the route -->
+    <router-view > <!-- This will render the appropriate component based on the route -->
     <div class="min-h-screen w-full bg-slate-900 flex">
       <!-- Check if loggedIn is true, then show the Sidebar and Main Content -->
 
@@ -35,6 +35,7 @@
         </div>
       </div>
     </div>
+    </router-view>
   </div>
 </template>
 
