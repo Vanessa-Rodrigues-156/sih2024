@@ -15,7 +15,12 @@
 
       <!-- Search Bar (Below Header) -->
       <div class="w-full bg-slate-800 py-4 px-6">
-        <input type="text" class="w-full px-6 py-3 bg-slate-700 rounded-md text-slate-200" placeholder="Search News..." />
+        <input 
+          type="text" 
+          class="w-full px-6 py-3 bg-slate-700 rounded-md text-slate-200" 
+          placeholder="Search News..." 
+          v-model="searchQuery" 
+        />
       </div>
 
       <!-- Main Content (Flex Container) -->
@@ -123,88 +128,100 @@
 
 <script>
 export default {
-    name: 'CyberKhabar',
-    data() {
-        return {
-            attackTypes: [],
-            impactLevels: [],
-            locations: [],
-            selectedFilters: {
-                type: [],
-                impact: [],
-                location: [],
-                recency: '7'
-            },
-            news: [],
-            currentStats: {
-                'Active Threats': 0,
-                'Resolved Incidents': 0,
-                'Pending Alerts': 0,
-                relatedIncidents: 0
-            }
-        };
+  name: 'CyberKhabar',
+  data() {
+    return {
+      attackTypes: [],
+      impactLevels: [],
+      locations: [],
+      selectedFilters: {
+        type: [],
+        impact: [],
+        location: [],
+        recency: '7',
+      },
+      news: [],
+      currentStats: {
+        'Active Threats': 0,
+        'Resolved Incidents': 0,
+        'Pending Alerts': 0,
+        relatedIncidents: 0,
+      },
+      searchQuery: '', // New data property for search query
+    };
+  },
+  computed: {
+    filteredNews() {
+      const query = this.searchQuery.toLowerCase().split(/\s+/); // Split search query into keywords
+
+      // Function to count the number of keyword matches in a title
+      const countKeywordMatches = (title, query) => {
+        return query.reduce((count, keyword) => {
+          return title.includes(keyword) ? count + 1 : count;
+        }, 0);
+      };
+
+      // Sort the news based on keyword matches in descending order
+      return this.news
+        .map((newsItem) => ({
+          ...newsItem,
+          matchCount: countKeywordMatches(newsItem.title.toLowerCase(), query),
+        }))
+        .filter((newsItem) => newsItem.matchCount > 0) // Filter out news with no matches
+        .sort((a, b) => b.matchCount - a.matchCount); // Sort by match count in descending order
     },
-    computed: {
-        filteredNews() {
-            return this.news.filter(newsItem => {
-                return (
-                    (this.selectedFilters.type.length === 0 || this.selectedFilters.type.includes(newsItem.type)) &&
-                    (this.selectedFilters.impact.length === 0 || this.selectedFilters.impact.includes(newsItem.impact)) &&
-                    (this.selectedFilters.location.length === 0 || this.selectedFilters.location.includes(newsItem.location))
-                );
-            });
-        }
+  },
+  methods: {
+    getStatsIcon(key) {
+      const icons = {
+        'Active Threats': 'fas fa-exclamation-triangle',
+        'Resolved Incidents': 'fas fa-check-circle',
+        'Pending Alerts': 'fas fa-clock',
+      };
+      return icons[key] || 'fas fa-info-circle';
     },
-    methods: {
-        getStatsIcon(key) {
-            const icons = {
-                'Active Threats': 'fas fa-exclamation-triangle',
-                'Resolved Incidents': 'fas fa-check-circle',
-                'Pending Alerts': 'fas fa-clock'
-            };
-            return icons[key] || 'fas fa-info-circle';
-        },
-        async fetchNews() {
-            const response = await fetch('http://localhost:5001/api/news');
-            this.news = await response.json();
-        },
-        async fetchAttackTypes() {
-            const response = await fetch('http://localhost:5001/api/attack-types');
-            this.attackTypes = await response.json();
-        },
-        async fetchImpactLevels() {
-            const response = await fetch('http://localhost:5001/api/impact-levels');
-            this.impactLevels = await response.json();
-        },
-        async fetchLocations() {
-            const response = await fetch('http://localhost:5001/api/locations');
-            this.locations = await response.json();
-        },
-        async fetchCurrentStats() {
-            const response = await fetch('http://localhost:5001/api/current-stats');
-            this.currentStats = await response.json();
-        }
+    async fetchNews() {
+      const response = await fetch('http://localhost:5001/api/news');
+      this.news = await response.json();
     },
-    async created() {
-        try {
-            await Promise.all([
-                this.fetchNews(),
-                this.fetchAttackTypes(),
-                this.fetchImpactLevels(),
-                this.fetchLocations(),
-                this.fetchCurrentStats()
-            ]);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
+    async fetchAttackTypes() {
+      const response = await fetch('http://localhost:5001/api/attack-types');
+      this.attackTypes = await response.json();
+    },
+    async fetchImpactLevels() {
+      const response = await fetch('http://localhost:5001/api/impact-levels');
+      this.impactLevels = await response.json();
+    },
+    async fetchLocations() {
+      const response = await fetch('http://localhost:5001/api/locations');
+      this.locations = await response.json();
+    },
+    async fetchCurrentStats() {
+      const response = await fetch('http://localhost:5001/api/current-stats');
+      this.currentStats = await response.json();
+    },
+  },
+  async created() {
+    try {
+      await Promise.all([
+        this.fetchNews(),
+        this.fetchAttackTypes(),
+        this.fetchImpactLevels(),
+        this.fetchLocations(),
+        this.fetchCurrentStats(),
+      ]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
+  },
 };
 </script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
